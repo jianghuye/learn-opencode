@@ -4,12 +4,13 @@ subtitle: 安全策略配置
 course: OpenCode 中文实战课
 stage: 第五阶段
 lesson: "5.5"
-duration: 12 分钟
+duration: 15 分钟
 level: 进阶
-description: 配置权限策略控制 AI 能做什么、不能做什么，确保操作安全。
+description: 配置权限策略控制 AI 能做什么、不能做什么，确保操作安全。包括外部目录访问控制。
 tags:
   - 权限
   - 安全
+  - external_directory
 prerequisite:
   - 5.1 配置全解
 ---
@@ -33,6 +34,7 @@ prerequisite:
 - 配置细粒度规则
 - 配置 Agent 级权限
 - 理解 Bash 命令如何被匹配
+- 配置外部目录访问权限（`external_directory`）
 
 ---
 
@@ -41,6 +43,7 @@ prerequisite:
 - 担心 AI 执行危险命令
 - 每次写文件都要确认，太麻烦
 - 想限制某些 Agent 的能力
+- AI 访问项目外的文件时总是弹出确认框
 
 ---
 
@@ -135,10 +138,10 @@ prerequisite:
 | `grep` | 内容搜索 | 正则表达式模式 |
 | `list` | 列出目录文件 | 目录路径 |
 | `bash` | 运行 shell 命令 | 解析后的命令前缀 |
-| `task` | 启动子代理 | 子代理类型 |
+| `task` | 启动子代理 | 子代理名称 |
 | `skill` | 加载技能 | 技能名称 |
-| `lsp` | 运行 LSP 查询 | 当前**不支持**细粒度匹配 |
-| `external_directory` | 访问项目外路径 | 路径 |
+| `lsp` | 运行 LSP 查询 | 支持细粒度匹配 |
+| `external_directory` | 访问项目外路径 | 目录路径 |
 
 ### 仅支持简单语法的权限
 
@@ -148,10 +151,12 @@ prerequisite:
 |------|------|
 | `todoread` | 读取待办列表 |
 | `todowrite` | 更新待办列表 |
-| `webfetch` | 获取 URL 内容 |
-| `websearch` | 网页搜索 |
-| `codesearch` | 代码搜索 |
+| `webfetch` | 获取 URL 内容（运行时会传递 URL 用于 always 批准） |
+| `websearch` | 网页搜索（运行时会传递查询用于 always 批准） |
+| `codesearch` | 代码搜索（运行时会传递查询用于 always 批准） |
 | `doom_loop` | 相同工具调用重复 3 次时触发 |
+
+> **来源**：`opencode/packages/opencode/src/config/config.ts:418-447`
 
 ---
 
@@ -169,6 +174,114 @@ prerequisite:
       "*.env": "deny",
       "*.env.*": "deny",
       "*.env.example": "allow"  // 示例文件允许读取
+    }
+  }
+}
+```
+
+> **来源**：`opencode/packages/opencode/src/agent/agent.ts:46-57`
+
+---
+
+## 外部目录访问权限（external_directory）
+
+当 AI 尝试访问**项目工作目录之外**的文件时，会触发 `external_directory` 权限检查。
+
+### 触发场景
+
+以下工具在访问项目外路径时会触发此权限：
+
+| 工具 | 触发条件 |
+|------|---------|
+| `read` | 读取项目外的文件 |
+| `edit` | 编辑项目外的文件 |
+| `write` | 写入项目外的文件 |
+| `patch` | 修补项目外的文件 |
+| `bash` | 命令涉及项目外路径（如 `cd ..`、`rm /tmp/file`） |
+
+### 检测逻辑
+
+OpenCode 使用相对路径判断文件是否在项目内：
+
+```typescript
+// 来源：opencode/packages/opencode/src/util/filesystem.ts:25-27
+export function contains(parent: string, child: string) {
+  return !relative(parent, child).startsWith("..")
+}
+```
+
+如果相对路径以 `..` 开头，说明文件在项目目录之外。
+
+### 默认行为
+
+```jsonc
+{
+  "permission": {
+    "external_directory": "ask"  // 默认值：每次询问用户确认
+  }
+}
+```
+
+### 常用配置：允许访问外部文件夹
+
+如果你希望 OpenCode 访问外部文件夹时**不需要每次授权**，添加以下配置：
+
+```jsonc
+// opencode.json
+{
+  "permission": {
+    "external_directory": "allow"
+  }
+}
+```
+
+这是最常用的配置之一，特别适合以下场景：
+- 需要频繁访问 `~/.config/` 等配置目录
+- 项目依赖其他目录的文件
+- 使用 monorepo 但只在子目录启动 OpenCode
+
+### 细粒度控制（按路径）
+
+`external_directory` 支持对象语法，可以按路径配置：
+
+```jsonc
+{
+  "permission": {
+    "external_directory": {
+      "*": "ask",                    // 默认需确认
+      "/tmp/*": "allow",             // /tmp 目录允许
+      "/home/user/shared/*": "allow", // 共享目录允许
+      "/etc/*": "deny"               // 系统配置禁止
+    }
+  }
+}
+```
+
+### 配置方式汇总
+
+| 方式 | 配置位置 | 示例 |
+|------|---------|------|
+| 全局配置 | `~/.config/opencode/opencode.json` | `"external_directory": "allow"` |
+| 项目配置 | `项目根目录/opencode.json` | `"external_directory": "allow"` |
+| 环境变量 | `OPENCODE_PERMISSION` | `export OPENCODE_PERMISSION='{"external_directory": "allow"}'` |
+| Agent 级别 | `agent.xxx.permission` | 见下方示例 |
+
+### Agent 级别配置
+
+```jsonc
+{
+  "agent": {
+    "file-manager": {
+      "description": "文件管理 Agent，可访问外部目录",
+      "permission": {
+        "external_directory": "allow"
+      }
+    },
+    "safe-agent": {
+      "description": "安全 Agent，禁止访问外部目录",
+      "permission": {
+        "external_directory": "deny"
+      }
     }
   }
 }
@@ -329,7 +442,8 @@ permission:
 | `todowrite: {...}` 报错 | 只支持简单语法 | 改为 `todowrite: "allow"` |
 | `git push` 被匹配为 `git` | 没有配置完整命令 | 配置 `"git push": "allow"` |
 | Agent 权限不生效 | 嵌套层级错误 | 确保在 `agent.名称.permission` 下 |
-| lsp 权限无法细粒度 | 当前版本不支持 | 只能设置 `lsp: "allow/ask/deny"` |
+| 访问外部文件总是弹确认 | `external_directory` 默认 `ask` | 设置 `"external_directory": "allow"` |
+| 想禁止访问某些外部路径 | 需要细粒度控制 | 使用对象语法按路径配置 |
 
 ---
 
@@ -343,6 +457,7 @@ permission:
 4. Bash 命令的 Arity 解析机制
 5. `always` 的模式匹配行为
 6. Agent 级权限覆盖
+7. **外部目录访问权限**（`external_directory`）的配置方法
 
 ---
 
