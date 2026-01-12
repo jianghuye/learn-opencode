@@ -28,7 +28,7 @@ OpenAI 是 ChatGPT 背后的公司，提供目前最强的 AI 模型。2025年12
 ::: warning 国内用户注意
 OpenAI 需要代理才能访问。请先完成 [1.3 网络配置](./03-network)。
 
-如果网络搞不定，建议使用 [DeepSeek](./04b-deepseek) 或 [智谱](./04c-zhipu) 等国产模型。
+如果网络搞不定，建议使用 [智谱](./04c-zhipu) 或 [DeepSeek](./04b-deepseek) 等国产模型。
 :::
 
 ---

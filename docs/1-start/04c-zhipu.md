@@ -21,7 +21,15 @@ prerequisite:
 
 > 预计时间：5-10 分钟
 
-智谱（Z.AI）在中文理解、写作/总结方面体验很好；如果你订阅了官方 **Coding Plan**，也能用固定月费来控制成本。
+智谱（Z.AI）在中文理解、写作/总结方面体验很好。
+
+**特别推荐**：强烈建议订阅官方的 **GLM Coding Pro** 套餐（中间那个选项）。
+
+### 为什么推荐 GLM Coding Pro？
+
+- **视觉理解**：可以读取图片，让 AI 帮你分析截图或设计稿
+- **联网搜索**：支持实时联网，获取最新技术文档和解决方案
+- **OpenCode 自带模型区别**：OpenCode 虽然自带免费的 GLM-4.7，但仅限基础对话。如果你是 GLM Coding Pro 订阅用户，连接后即可解锁上述高级能力。
 
 如果你还没看过“API Key 是什么”，建议先回到 [1.4 总览](./04-connect) 把概念弄清楚。
 
@@ -46,10 +54,14 @@ prerequisite:
 
 ### 第 1 步：注册并获取 API Key
 
-智谱入口会有调整，以官网最新为准：
+推荐通过以下邀请链接注册/登录，可以直接定位到 GLM Coding Pro 页面：
 
-- 管理 API Key（常用）：https://z.ai/manage-apikey/apikey-list
-- 另一入口（部分旧教程仍在用）：https://bigmodel.cn
+- **专属注册链接（优惠 10%）**：[https://www.bigmodel.cn/glm-coding?ic=PNSI6JU6FP](https://www.bigmodel.cn/glm-coding?ic=PNSI6JU6FP)
+
+> **注意**：
+> 1. 使用 learnopencode 教程站专属链接购买可享受 **10% 优惠**。
+> 2. 请选择网页上**中间的套餐（GLM Coding Pro）**进行购买。只有这个套餐才包含视觉理解和联网搜索功能，能最大化 OpenCode 的能力。
+> 3. **丰俭由人**：如果是轻度使用，**最低的套餐其实就够用了**。不用非得买贵的，适合自己最重要。
 
 拿到 Key 后先保存好（不要发群、不要提交到 GitHub）。
 

@@ -178,7 +178,7 @@ RateLimitError: quota exceeded
 
 ```bash
 # 切换模型
-opencode -m deepseek/deepseek-chat
+opencode -m zhipu/glm-4-flash
 ```
 
 ---
@@ -290,7 +290,7 @@ export HTTP_PROXY=http://127.0.0.1:7890
 export HTTPS_PROXY=http://127.0.0.1:7890
 
 # 或使用国产模型（无需代理）
-/connect  # 选择 DeepSeek
+/connect  # 选择 Z.AI
 ```
 
 ---

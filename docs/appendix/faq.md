@@ -97,9 +97,9 @@ opencode
 
 **方案2：使用国产模型**
 ```bash
-# 直接使用 DeepSeek，国内可直连
+# 直接使用智谱或 DeepSeek，国内可直连
 opencode
-/connect  # 选择 DeepSeek
+/connect  # 选择 Z.AI 或 DeepSeek
 ```
 
 详见 [网络配置](../1-start/03-network)。

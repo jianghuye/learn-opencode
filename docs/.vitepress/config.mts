@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'OpenCode 中文教程',
   titleTemplate: ':title - AI 编程助手实战指南',
-  description: 'OpenCode 是终端 AI 编程助手，本教程从零基础到进阶，教你用 AI 写代码、改 Bug、自动化办公。支持 DeepSeek、智谱等国产模型，完全免费开源。',
+  description: 'OpenCode 是终端 AI 编程助手，本教程从零基础到进阶，教你用 AI 写代码、改 Bug、自动化办公。支持智谱、DeepSeek 等国产模型，完全免费开源。',
   lang: 'zh-CN',
 
   // 站点地图
@@ -16,7 +16,7 @@ export default defineConfig({
     ['link', { rel: 'icon', href: '/favicon.png', type: 'image/png' }],
     ['meta', { name: 'theme-color', content: '#10b981' }],
     ['meta', { name: 'author', content: 'OpenCode 中文社区' }],
-    ['meta', { name: 'keywords', content: 'OpenCode,AI编程,AI编程助手,OpenCode教程,AI写代码,DeepSeek,智谱,Claude' }],
+    ['meta', { name: 'keywords', content: 'OpenCode,AI编程,AI编程助手,OpenCode教程,AI写代码,智谱,DeepSeek,Claude' }],
     ['link', { rel: 'canonical', href: 'https://learnopencode.com/' }],
 
     // Open Graph
@@ -24,7 +24,7 @@ export default defineConfig({
     ['meta', { property: 'og:locale', content: 'zh_CN' }],
     ['meta', { property: 'og:site_name', content: 'OpenCode 中文教程' }],
     ['meta', { property: 'og:title', content: 'OpenCode 中文教程 - AI 编程助手实战指南' }],
-    ['meta', { property: 'og:description', content: 'OpenCode 是终端 AI 编程助手，本教程从零基础到进阶，教你用 AI 写代码、改 Bug、自动化办公。支持 DeepSeek、智谱等国产模型，完全免费开源。' }],
+    ['meta', { property: 'og:description', content: 'OpenCode 是终端 AI 编程助手，本教程从零基础到进阶，教你用 AI 写代码、改 Bug、自动化办公。支持智谱、DeepSeek 等国产模型，完全免费开源。' }],
     ['meta', { property: 'og:url', content: 'https://learnopencode.com' }],
     ['meta', { property: 'og:image', content: 'https://learnopencode.com/og-image.png' }],
     ['meta', { property: 'og:image:width', content: '1200' }],
@@ -111,8 +111,8 @@ export default defineConfig({
             items: [
               { text: '总览：第一次对话', link: '/1-start/04-connect' },
               { text: '免费模型（OpenCode Zen）', link: '/1-start/04a-free-models' },
+              { text: '[推荐] 智谱 GLM-4.7', link: '/1-start/04c-zhipu' },
               { text: 'DeepSeek', link: '/1-start/04b-deepseek' },
-              { text: '智谱', link: '/1-start/04c-zhipu' },
               { text: 'MiniMax', link: '/1-start/04d-minimax' },
               { text: 'Claude（Anthropic）', link: '/1-start/04e-claude' },
               { text: 'Claude Code 中转', link: '/1-start/04f-claudecode-relay' },

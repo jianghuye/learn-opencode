@@ -50,7 +50,7 @@
 </tr>
 <tr>
 <td align="center">🇨🇳</td>
-<td><strong>国内直连</strong><br>原生支持 DeepSeek、智谱、MiniMax、通义千问，不用折腾网络</td>
+<td><strong>国内直连</strong><br>原生支持智谱、DeepSeek、MiniMax、通义千问，不用折腾网络</td>
 </tr>
 <tr>
 <td align="center">📖</td>

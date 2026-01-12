@@ -2,7 +2,7 @@
 layout: home
 title: OpenCode 中文教程
 titleTemplate: AI 编程助手实战指南
-description: OpenCode 中文教程官网。从零基础到进阶，手把手教你用 AI 编程助手写代码、改 Bug、自动化办公。支持 DeepSeek、智谱等国产模型。
+description: OpenCode 中文教程官网。从零基础到进阶，手把手教你用 AI 编程助手写代码、改 Bug、自动化办公。支持智谱、DeepSeek 等国产模型。
 
 hero:
   name: OpenCode
@@ -29,7 +29,7 @@ features:
   - icon:
       src: /icons/globe.svg
     title: 国内用户友好
-    details: 原生支持 DeepSeek、智谱、MiniMax 等国产模型，国内直连
+    details: 原生支持智谱、DeepSeek、MiniMax 等国产模型，国内直连
     link: /1-start/04-connect
     linkText: 配置国产模型
   - icon:
