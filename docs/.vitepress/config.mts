@@ -315,6 +315,7 @@ export default defineConfig({
           { text: '5.18 代码格式化器', link: '/5-advanced/18-formatters' },
           { text: '5.19 LSP 服务器', link: '/5-advanced/19-lsp' },
           { text: '5.20 上下文压缩', link: '/5-advanced/20-compaction' },
+          { text: '5.21 思考深度配置', link: '/5-advanced/21-thinking-depth' },
         ]
       },
       {
@@ -340,6 +341,7 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: '更新日志', link: '/changelog/' },
+          { text: 'v1.1.23', link: '/changelog/v1.1.23' },
           { text: 'v1.1.21', link: '/changelog/v1.1.21' },
           { text: 'v1.1.20', link: '/changelog/v1.1.20' },
           { text: 'v1.1.19', link: '/changelog/v1.1.19' },
