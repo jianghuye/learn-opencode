@@ -86,7 +86,7 @@ prerequisite:
 |-----------|------|------------------|
 | 自定义命令（Custom Commands） | 把“提示词模板”固化为 `/命令名` | 命令模板来自：Markdown 文件内容（官方：`opencode/packages/web/src/content/docs/commands.mdx:33`～`opencode/packages/web/src/content/docs/commands.mdx:34`；源码：`opencode/packages/opencode/src/config/config.ts:214`～`opencode/packages/opencode/src/config/config.ts:218`） |
 | 命令参数 | 给命令传参 | `$ARGUMENTS` / `$1` / `$2`…（官方：`opencode/packages/web/src/content/docs/commands.mdx:111`～`opencode/packages/web/src/content/docs/commands.mdx:161`） |
-| 命令嵌入 shell 输出 | 把 `!\`cmd\`` 输出注入到 prompt | 语法 `!\`command\``（官方：`opencode/packages/web/src/content/docs/commands.mdx:164`～`opencode/packages/web/src/content/docs/commands.mdx:179`；源码：`opencode/packages/opencode/src/config/markdown.ts:7`～`opencode/packages/opencode/src/config/markdown.ts:15`） |
+| 命令嵌入 shell 输出 | 把 ``!`cmd` `` 输出注入到 prompt | 语法 ``!`command` ``（官方：`opencode/packages/web/src/content/docs/commands.mdx:164`～`opencode/packages/web/src/content/docs/commands.mdx:179`；源码：`opencode/packages/opencode/src/config/markdown.ts:7`～`opencode/packages/opencode/src/config/markdown.ts:15`） |
 | 命令引用文件 | 用 `@path/to/file` 把文件内容注入 | 语法 `@...`（官方：`opencode/packages/web/src/content/docs/commands.mdx:198`～`opencode/packages/web/src/content/docs/commands.mdx:212`；源码：`opencode/packages/opencode/src/config/markdown.ts:6`～`opencode/packages/opencode/src/config/markdown.ts:12`） |
 | `opencode run` | 非交互运行（便于脚本化/流水线） | CLI 支持 `opencode run [message..]`（官方：`opencode/packages/web/src/content/docs/cli.mdx:311`～`opencode/packages/web/src/content/docs/cli.mdx:350`） |
 | MCP 服务器 | 引入外部工具（数据库/API/搜索） | MCP 工具会自动可用，但会占用上下文（官方：`opencode/packages/web/src/content/docs/mcp-servers.mdx:8`～`opencode/packages/web/src/content/docs/mcp-servers.mdx:21`） |
