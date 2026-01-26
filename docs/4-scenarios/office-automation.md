@@ -154,7 +154,7 @@ model: anthropic/claude-opus-4-5-thinking
 
 > 解释：
 > - 命令文件的“正文内容”就是模板（官方：`opencode/packages/web/src/content/docs/commands.mdx:33`～`opencode/packages/web/src/content/docs/commands.mdx:34`）。
-> - `!\`date ...\`` 会把命令输出注入 prompt（官方：`opencode/packages/web/src/content/docs/commands.mdx:164`～`opencode/packages/web/src/content/docs/commands.mdx:179`）。
+> - ``!`date ...` `` 会把命令输出注入 prompt（官方：`opencode/packages/web/src/content/docs/commands.mdx:164`～`opencode/packages/web/src/content/docs/commands.mdx:179`）。
 
 #### 方法二：在 `opencode.json` 里用 JSONC 配置命令
 
@@ -290,7 +290,7 @@ OpenCode 支持 `{env:VAR}` 与 `{file:path}`（官方：`opencode/packages/web/
 |-----|-----|-----|
 | 自定义命令执行后“像没生效” | 把模板写在 frontmatter 而不是正文 | 命令文件“正文内容”才是模板（官方：`opencode/packages/web/src/content/docs/commands.mdx:33`～`opencode/packages/web/src/content/docs/commands.mdx:34`） |
 | 自定义命令与内置命令同名 | 会覆盖内置命令 | 避免与 `/init`、`/share` 等重名（官方：`opencode/packages/web/src/content/docs/commands.mdx:319`～`opencode/packages/web/src/content/docs/commands.mdx:323`） |
-| 命令里 `!\`cmd\`` 输出不符合预期 | 命令在项目根目录执行 | 把路径写成相对项目根，或在模板里明确目录（官方：`opencode/packages/web/src/content/docs/commands.mdx:194`～`opencode/packages/web/src/content/docs/commands.mdx:195`） |
+| 命令里 ``!`cmd` `` 输出不符合预期 | 命令在项目根目录执行 | 把路径写成相对项目根，或在模板里明确目录（官方：`opencode/packages/web/src/content/docs/commands.mdx:194`～`opencode/packages/web/src/content/docs/commands.mdx:195`） |
 | provider 的 `apiKey` 不生效 | 写成了 `provider.<id>.apiKey` | 按 Schema 放到 `provider.<id>.options.apiKey`（源码：`opencode/packages/opencode/src/config/config.ts:740`～`opencode/packages/opencode/src/config/config.ts:763`） |
 
 ---
@@ -301,7 +301,7 @@ OpenCode 支持 `{env:VAR}` 与 `{file:path}`（官方：`opencode/packages/web/
 |---|---|---|
 | 命令模板来源 | Markdown 正文为 template | `opencode/packages/web/src/content/docs/commands.mdx:33`～`opencode/packages/web/src/content/docs/commands.mdx:34` |
 | 命令参数占位符 | 支持 `$ARGUMENTS` 与 `$1...` | `opencode/packages/web/src/content/docs/commands.mdx:111`～`opencode/packages/web/src/content/docs/commands.mdx:161` |
-| 命令嵌入 shell | 支持 `!\`command\`` | `opencode/packages/web/src/content/docs/commands.mdx:164`～`opencode/packages/web/src/content/docs/commands.mdx:179` |
+| 命令嵌入 shell | 支持 ``!`command` `` | `opencode/packages/web/src/content/docs/commands.mdx:164`～`opencode/packages/web/src/content/docs/commands.mdx:179` |
 | CLI 自动化 | 支持 `opencode run` | `opencode/packages/web/src/content/docs/cli.mdx:311`～`opencode/packages/web/src/content/docs/cli.mdx:350` |
 | MCP 能力 | MCP 工具会自动可用，但会增加上下文 | `opencode/packages/web/src/content/docs/mcp-servers.mdx:8`～`opencode/packages/web/src/content/docs/mcp-servers.mdx:21` |
 
