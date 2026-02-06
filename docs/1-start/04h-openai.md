@@ -109,7 +109,7 @@ OpenCode 会自动打开浏览器，跳转到 OpenAI 登录页面。
 ✓ Login successful
 ```
 
-现在输入 `/models`，你应该能看到 OpenAI 的所有模型了！
+现在输入 `/models`，你应该能看到 OpenAI 的所有模型了！如果你刚开通了新模型但列表没更新，在系统终端运行 `opencode models --refresh` 刷新缓存，再回到 `/models`。
 
 ---
 
