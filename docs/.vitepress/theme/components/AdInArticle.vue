@@ -9,52 +9,30 @@
   </div>
 </template>
 
-<script setup>
-import { onMounted, ref, nextTick } from 'vue'
+<script setup lang="ts">
+import { nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { cancelAdPush, isAdHostAllowed, scheduleAdPush } from '../composables/useAdsense'
 
 const isEnabled = ref(false)
-const adRef = ref(null)
-const allowedHosts = new Set(['learnopencode.com', 'www.learnopencode.com'])
-
-const isAllowedHost = () => {
-  if (typeof window === 'undefined') {
-    return false
-  }
-
-  return allowedHosts.has(window.location.hostname)
-}
-
-const initAd = () => {
-  const adElement = adRef.value
-
-  if (!adElement) {
-    return
-  }
-
-  if (adElement.getAttribute('data-adsbygoogle-status') || adElement.getAttribute('data-ad-status')) {
-    return
-  }
-
-  try {
-    (window.adsbygoogle = window.adsbygoogle || []).push({})
-  } catch (error) {
-    isEnabled.value = false
-    console.error('AdSense init failed', {
-      slot: '9628105168',
-      host: window.location.hostname,
-      error
-    })
-  }
-}
+const adRef = ref<HTMLElement | null>(null)
 
 onMounted(async () => {
-  if (!isAllowedHost()) {
+  if (!isAdHostAllowed()) {
     return
   }
 
   isEnabled.value = true
   await nextTick()
-  initAd()
+
+  if (adRef.value) {
+    scheduleAdPush(adRef.value)
+  }
+})
+
+onUnmounted(() => {
+  if (adRef.value) {
+    cancelAdPush(adRef.value)
+  }
 })
 </script>
 
