@@ -67,10 +67,11 @@ yarn global add opencode-ai
 
 :::
 
-### Arch Linux (paru)
+### Arch Linux
 
 ```bash
-paru -S opencode-bin
+sudo pacman -S opencode    # 稳定版（推荐）
+paru -S opencode-bin       # AUR 最新版
 ```
 
 ---

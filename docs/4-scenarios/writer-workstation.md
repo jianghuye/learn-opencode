@@ -99,7 +99,7 @@ Frontmatter 中可以配置的字段：
 | 字段 | 类型 | 说明 | 示例 |
 |-----|------|------|-------|
 | `name` | 字符串（必需） | Agent 名称，文件名即名称 |
-| `description` | 字符串（必需） | Agent 功能描述，显示在菜单中 |
+| `description` | 字符串 | Agent 功能描述（显示在菜单中） |
 | `mode` | `"primary"` 或 `"subagent"` | 主 agent 可通过 Tab 切换，子 agent 通过 @ 调用 |
 | `temperature` | 数字（0.0-1.0） | 控制随机性：0.0-0.2 专注，0.3-0.5 平衡，0.6-1.0 创意 |
 | `model` | 字符串 | 覆盖默认模型，格式：`provider/model-id` |
@@ -178,13 +178,14 @@ mkdir -p .opencode/skill/character-design
 ```
 帮我创建一个角色设计 Skill，保存到 .opencode/skill/character-design/SKILL.md：
 
-> ⚠️ **命名规则**
-> - 必须小写字母、数字、连字符
+> ⚠️ **命名规则（推荐）**
+> - 使用小写字母、数字、连字符
 > - 1-64 个字符
 > - 不以连字符开头或结尾
 > - 不包含连续连字符（`--`）
 > - 必须与目录名一致
-> - 正则：`^[a-z0-9]+(-[a-z0-9]+)*$`
+> 
+> 推荐格式：`^[a-z0-9]+(-[a-z0-9]+)*$`
 
 ---
 name: character-design

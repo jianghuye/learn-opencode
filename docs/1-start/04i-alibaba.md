@@ -93,7 +93,7 @@ opencode
 
 在提供商列表里搜索并选择：
 
-- **中国大陆用户**：选择 `Alibaba (China)` 或搜索 `alibaba-china`
+- **中国大陆用户**：选择 `Alibaba (China)` 或搜索 `alibaba-cn`
 - **海外/国际用户**：选择 `Alibaba` 或搜索 `alibaba`
 
 然后粘贴你的 API Key。
@@ -106,7 +106,7 @@ opencode
 
 ::: tip 国际版 vs 中国版
 两个版本使用不同的 API 端点：
-- 中国版（`alibaba-china`）：`dashscope.aliyuncs.com`
+- 中国版（`alibaba-cn`）：`dashscope.aliyuncs.com`
 - 国际版（`alibaba`）：`dashscope-intl.aliyuncs.com`
 
 如果你在中国大陆，选错版本可能导致连接超时或失败。
@@ -164,7 +164,7 @@ source ~/.zshrc
 {
   "$schema": "https://opencode.ai/config.json",
   "provider": {
-    "alibaba-china": {
+    "alibaba-cn": {
       "options": {
         "baseURL": "https://dashscope.aliyuncs.com/compatible-mode/v1"
       }
@@ -191,7 +191,7 @@ source ~/.zshrc
 | 找不到 Alibaba 选项 | OpenCode 版本太旧 | 升级 OpenCode：`opencode upgrade` |
 | 报余额不足 | 免费额度用完 | 去控制台充值 |
 | 提示需要实名认证 | 阿里云要求实名 | 完成实名认证后重试 |
-| 连接超时 | 选错了国际版/中国版 | 中国大陆用户请选 `alibaba-china` |
+| 连接超时 | 选错了国际版/中国版 | 中国大陆用户请选 `alibaba-cn` |
 | 某些模型不支持 tool_call | 并非所有模型都支持工具调用 | 换用 `qwen-plus` 或 `qwen3-coder-flash` |
 
 ---

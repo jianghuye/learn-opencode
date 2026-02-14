@@ -89,12 +89,7 @@ opencode
 
 在提供商列表里选择 `DeepSeek`，然后粘贴你的 API Key。
 
-成功后你会看到类似提示：
-
-```
-✓ Provider added successfully!
-✓ DeepSeek is now your active provider
-```
+成功后你会进入模型选择界面，显示 DeepSeek 的可用模型列表（如 `deepseek-chat`、`deepseek-reasoner`）。选择一个模型即可开始对话。
 
 ---
 

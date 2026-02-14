@@ -288,8 +288,8 @@ Plan Agent 通常使用较低的 `temperature`（如 0.1），输出更专注和
 ```jsonc
 {
   "keybinds": {
-    "agent_cycle": "f1",        // 切换到下一个 Agent
-    "agent_cycle_reverse": "shift+f1"  // 切换到上一个 Agent
+    "agent_cycle": "tab",           // 切换到下一个 Agent（默认值）
+    "agent_cycle_reverse": "shift+tab"  // 切换到上一个 Agent（默认值）
   }
 }
 ```

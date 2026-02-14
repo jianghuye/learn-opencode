@@ -90,7 +90,7 @@ opencode run [message..]
 **选项**：
 | 选项 | 短选项 | 说明 |
 |------|--------|------|
-| `--command` | | 要执行的命令，使用 message 作为参数 |
+| `--command` | | 要执行的斜杠命令名称，message 作为命令参数 |
 | `--continue` | `-c` | 继续上次会话 |
 | `--session` | `-s` | 指定会话 ID |
 | `--share` | | 分享会话 |
@@ -386,7 +386,7 @@ opencode stats
 | 选项 | 说明 |
 |------|------|
 | `--days` | 最近 N 天的统计 |
-| `--tools` | 显示的工具数量 |
+| `--tools` | 显示的工具数量（默认显示全部） |
 | `--models` | 显示模型使用明细（传入数字显示 Top N） |
 | `--project` | 按项目筛选（空字符串表示当前项目） |
 
@@ -602,8 +602,11 @@ opencode uninstall --dry-run
 | `OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS` | number | Bash 默认超时（毫秒） |
 | `OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX` | number | LLM 最大输出 token |
 | `OPENCODE_EXPERIMENTAL_FILEWATCHER` | boolean | 启用目录文件监听 |
+| `OPENCODE_EXPERIMENTAL_DISABLE_FILEWATCHER` | boolean | 禁用目录文件监听 |
 | `OPENCODE_EXPERIMENTAL_OXFMT` | boolean | 启用 oxfmt 格式化器 |
 | `OPENCODE_EXPERIMENTAL_LSP_TOOL` | boolean | 启用实验性 LSP 工具 |
+| `OPENCODE_EXPERIMENTAL_LSP_TY` | boolean | 启用 LSP 类型推断 |
+| `OPENCODE_ENABLE_EXA` | boolean | 启用 Exa 代码搜索 |
 
 ---
 

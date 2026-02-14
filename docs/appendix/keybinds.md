@@ -227,7 +227,8 @@ OpenCode 桌面应用的输入框支持 Readline/Emacs 风格快捷键，这些�
 | `session_child_cycle_reverse` | `<leader>left` | 反向切换子会话 |
 | `session_parent` | `<leader>up` | 返回父会话 |
 | `session_fork` | `none` | 分叉会话 |
-| `session_rename` | `none` | 重命名会话 |
+| `session_rename` | `ctrl+r` | 重命名会话 |
+| `session_delete` | `ctrl+d` | 删除会话 |
 | `session_share` | `none` | 分享会话 |
 | `session_unshare` | `none` | 取消分享 |
 
@@ -270,8 +271,8 @@ OpenCode 桌面应用的输入框支持 Readline/Emacs 风格快捷键，这些�
 | `messages_next` | `none` | 下一条消息 |
 | `messages_previous` | `none` | 上一条消息 |
 | `messages_last_user` | `none` | 跳到最后用户消息 |
-| `messages_page_up` | `pageup` | 向上翻页 |
-| `messages_page_down` | `pagedown` | 向下翻页 |
+| `messages_page_up` | `pageup,ctrl+alt+b` | 向上翻页 |
+| `messages_page_down` | `pagedown,ctrl+alt+f` | 向下翻页 |
 | `messages_half_page_up` | `ctrl+alt+u` | 向上半页 |
 | `messages_half_page_down` | `ctrl+alt+d` | 向下半页 |
 | `messages_first` | `ctrl+g,home` | 跳到顶部 |

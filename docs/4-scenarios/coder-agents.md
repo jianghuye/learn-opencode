@@ -104,10 +104,9 @@ description: 严格的代码审查专家
 mode: subagent
 model: anthropic/claude-opus-4-5-thinking
 temperature: 0.3
-tools:
-  write: false
-  edit: false
-  bash: false
+permission:
+  edit: deny
+  bash: deny
 ---
 
 
@@ -162,10 +161,9 @@ description: 安全漏洞猎人
 mode: subagent
 model: anthropic/claude-opus-4-5-thinking
 temperature: 0.2
-tools:
-  write: false
-  edit: false
-  bash: false
+permission:
+  edit: deny
+  bash: deny
 ---
 
 # Security Auditor Agent
@@ -218,10 +216,9 @@ description: 测试用例专家
 mode: subagent
 model: anthropic/claude-opus-4-5-thinking
 temperature: 0.4
-tools:
-  write: false
-  edit: false
-  bash: false
+permission:
+  edit: deny
+  bash: deny
 ---
 
 # Test Writer Agent

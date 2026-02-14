@@ -361,13 +361,13 @@ opencode auth logout
 
 | 你想做什么 | 终端命令              | TUI 斜杠命令            |
 | ---------- | --------------------- | ----------------------- |
-| 切换模型   | `opencode -m <id>`    | `/model` (或 `/models`) |
+| 切换模型   | `opencode -m <id>`    | `/models`               |
 | 登录账号   | `opencode auth login` | `/connect`              |
-| 查看统计   | `opencode stats`      | `/stats` (仅显示简报)   |
+| 查看状态   | `opencode stats`      | `/status` (显示简报)    |
 | 退出程序   | `Ctrl+C`              | `/exit`                 |
 
 ::: info 区别
-TUI 里的 `/model` 命令不仅能看，还能**直接切换**当前会话的模型。
+TUI 里的 `/models` 命令不仅能看，还能**直接切换**当前会话的模型。
 :::
 
 ---

@@ -178,7 +178,7 @@ opencode
 
 ```bash
 # 列出可用模型
-opencode models list
+opencode models
 ```
 
 ---

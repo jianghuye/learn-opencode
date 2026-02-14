@@ -1,5 +1,5 @@
 ---
-title: 连接 MiniMax（M2.1）
+title: 连接 MiniMax（M2.5/M2.1）
 subtitle: 9.9 元 Starter 月卡可选
 course: OpenCode 中文实战课
 stage: 第一阶段
@@ -7,7 +7,7 @@ lesson: "1.4d"
 duration: 15 分钟
 practice: 5 分钟
 level: 新手
-description: 获取 MiniMax API Key，并在 OpenCode 中连接使用 M2.1 等模型。
+description: 获取 MiniMax API Key，并在 OpenCode 中连接使用 M2.5、M2.1 等模型。
 tags:
   - 模型
   - MiniMax
@@ -16,11 +16,11 @@ prerequisite:
   - 1.2 安装
 ---
 
-# 连接 MiniMax（M2.1）
+# 连接 MiniMax（M2.5/M2.1）
 
 > 预计时间：10-15 分钟
 
-MiniMax 提供 M2.1 等模型，并且有 **Coding Plan**（例如 Starter 月卡）适合尝鲜。
+MiniMax 提供 M2.5、M2.1 等模型，并且有 **Coding Plan**（例如 Starter 月卡）适合尝鲜。
 
 如果你还没看过“API Key 是什么”，建议先回到 [1.4 总览](./04-connect)。
 
@@ -78,6 +78,10 @@ MiniMax 常见两种拿 Key 的方式：
 
 > 适用于：你需要指定 `baseURL`，或者你的版本里没有内置 MiniMax 入口。
 
+MiniMax 有两个 API 端点：
+- **国际版**：`https://api.minimax.io/anthropic/v1`
+- **国内版**：`https://api.minimaxi.com/anthropic/v1`
+
 1. 编辑 `~/.config/opencode/opencode.json`，添加 provider：
 
 ```json
@@ -87,9 +91,12 @@ MiniMax 常见两种拿 Key 的方式：
     "minimax": {
       "npm": "@ai-sdk/anthropic",
       "options": {
-        "baseURL": "https://api.minimaxi.com/anthropic/v1"
+        "baseURL": "https://api.minimax.io/anthropic/v1"
       },
       "models": {
+        "MiniMax-M2.5": {
+          "name": "MiniMax-M2.5"
+        },
         "MiniMax-M2.1": {
           "name": "MiniMax-M2.1"
         }
@@ -98,6 +105,8 @@ MiniMax 常见两种拿 Key 的方式：
   }
 }
 ```
+
+> 💡 国内用户可将 `baseURL` 改为 `https://api.minimaxi.com/anthropic/v1`
 
 2. 运行登录命令添加 Key：
 
@@ -128,7 +137,7 @@ unset ANTHROPIC_BASE_URL
 /models
 ```
 
-选择 `MiniMax-M2.1`（或你配置/列表中的其他模型），然后发送一句话验证：
+选择 `MiniMax-M2.5` 或 `MiniMax-M2.1`（或你配置/列表中的其他模型），然后发送一句话验证：
 
 ```
 你好，请介绍一下你自己

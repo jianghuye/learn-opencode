@@ -31,7 +31,7 @@ OpenCode 内置了一批**完全免费**的模型，**无需注册账号、无�
 | `glm-4.7-free` | GLM-4.7 | 智谱出品，支持推理，中文表现优秀 |
 | `minimax-m2.1-free` | MiniMax M2.1 | MiniMax 出品，支持推理，上下文 200K |
 | `gpt-5-nano` | GPT-5 Nano | OpenAI 出品，轻量快速 |
-| `grok-code` | Grok Code | xAI 出品，代码能力强 |
+| `kimi-k2.5-free` | Kimi K2.5 | 月之暗面出品，支持推理，上下文 256K |
 | `big-pickle` | Big Pickle | 隐藏模型，限时免费体验 |
 
 ::: tip 说明

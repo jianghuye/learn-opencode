@@ -221,9 +221,10 @@ rm -rf ~/.opencode/bin
 # 删除配置
 rm -rf ~/.config/opencode
 
-# 删除数据和缓存
+# 删除数据、缓存和状态
 rm -rf ~/.local/share/opencode
 rm -rf ~/.cache/opencode
+rm -rf ~/.local/state/opencode
 ```
 
 **Homebrew 安装：**
@@ -232,10 +233,17 @@ rm -rf ~/.cache/opencode
 brew uninstall opencode
 ```
 
-**npm 安装：**
+**npm/pnpm/Yarn 安装：**
 
 ```bash
+# npm
 npm uninstall -g opencode-ai
+
+# pnpm
+pnpm uninstall -g opencode-ai
+
+# Yarn
+yarn global remove opencode-ai
 ```
 
 **Scoop 安装：**
