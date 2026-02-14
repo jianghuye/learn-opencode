@@ -114,11 +114,18 @@ OpenCode 有两类 Agent：
 | 名称 | 模式 | 默认权限 | 说明 |
 |------|------|---------|------|
 | `build` | primary | 全部允许 | 默认开发 Agent，所有工具可用 |
-| `plan` | primary | edit: deny（仅 `.opencode/plan/*.md` 允许） | 只读规划，不修改代码 |
+| `plan` | primary | edit: deny（仅 `.opencode/plans/*.md` 允许） | 只读规划，不修改代码 |
 | `general` | subagent | todoread/todowrite: deny | 通用研究，多步任务 |
 | `explore` | subagent | 仅允许 grep/glob/list/bash/read/webfetch/websearch/codesearch | 快速代码探索 |
 
-> **关于 Plan Agent**：它不是"需要确认才能编辑"，而是**默认禁止编辑**，只有 `.opencode/plan/*.md` 目录下的文件允许写入。这是为了让你在规划阶段专注思考，不被代码修改分心。
+> **关于 Explore Agent 的探索深度**：调用 Explore 时可以指定探索深度级别。AI 会根据任务描述自动判断，你也可以在提示词中明确指定：
+> - **quick**：基本搜索，快速定位目标文件
+> - **medium**：中等探索，平衡速度和覆盖面
+> - **very thorough**：全面分析，跨多个位置和命名约定进行搜索
+>
+> 来源：`agent.ts:150`
+
+> **关于 Plan Agent**：它不是"需要确认才能编辑"，而是**默认禁止编辑**，只有 `.opencode/plans/*.md` 目录下的文件允许写入。这是为了让你在规划阶段专注思考，不被代码修改分心。
 > 
 > 来源：`agent.ts:69-83`
 

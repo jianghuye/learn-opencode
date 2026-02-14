@@ -178,14 +178,16 @@ Kimi K2 模型。
 
 **配置方式**：
 ```bash
-# 设置环境变量
+# 设置 Google Cloud 项目 ID（必需）
 export GOOGLE_CLOUD_PROJECT=your-project-id
-export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
-export VERTEX_LOCATION=global  # 可选
+# 或使用 GCP_PROJECT / GCLOUD_PROJECT 也可
 
-# 启动 opencode
-opencode
+# 设置区域（可选，默认 us-east5）
+export VERTEX_LOCATION=us-east5
+# 或使用 GOOGLE_CLOUD_LOCATION 也可
 ```
+
+> Google Vertex AI 需要通过 `gcloud auth application-default login` 或服务账号配置认证，OpenCode 会自动使用 Application Default Credentials。
 
 ---
 
@@ -202,6 +204,50 @@ opencode
 ```
 
 **获取 API Key**：[console.x.ai](https://console.x.ai)
+
+---
+
+### Mistral
+
+开源模型领导者，支持 Mistral Large、Codestral 等。
+
+| 模型 | 说明 |
+|------|------|
+| `mistral-large-latest` | 最强能力 |
+| `mistral-small-latest` | 快速响应 |
+| `codestral-latest` | 代码优化 |
+
+```bash
+/connect  # 搜索 Mistral
+```
+
+**获取 API Key**：[console.mistral.ai](https://console.mistral.ai)
+
+---
+
+### Cohere
+
+企业级 NLP 能力，支持 Rerank、Embed。
+
+```bash
+/connect  # 搜索 Cohere
+```
+
+**获取 API Key**：[dashboard.cohere.com](https://dashboard.cohere.com)
+
+---
+
+### Perplexity
+
+集成搜索能力，实时信息获取。
+
+```bash
+/connect  # 搜索 Perplexity
+```
+
+**获取 API Key**：[perplexity.ai/settings/api](https://www.perplexity.ai/settings/api)
+
+> API Key 格式：`pplx-...`
 
 ---
 
@@ -248,13 +294,11 @@ AWS_PROFILE=my-profile opencode
 ### Azure OpenAI
 
 ```bash
-/connect  # 搜索 Azure
-
-# 设置资源名
-export AZURE_RESOURCE_NAME=your-resource-name
+/connect  # 搜索 Azure OpenAI
 ```
 
-> 如遇 "I'm sorry, but I cannot assist" 错误，将内容过滤器从 DefaultV2 改为 Default。
+> - 如遇 "I'm sorry, but I cannot assist" 错误，将内容过滤器从 DefaultV2 改为 Default。
+> - Azure OpenAI 通过 `/connect` 配置，认证信息会自动存储。
 
 ---
 
@@ -266,6 +310,39 @@ export AZURE_RESOURCE_NAME=your-resource-name
 # 设置资源名
 export AZURE_COGNITIVE_SERVICES_RESOURCE_NAME=your-resource-name
 ```
+
+---
+
+### Cloudflare Workers AI
+
+Cloudflare 边缘网络，全球低延迟。
+
+```bash
+/connect  # 搜索 Cloudflare Workers AI
+
+# 或设置环境变量
+export CLOUDFLARE_API_KEY=your-api-token
+export CLOUDFLARE_ACCOUNT_ID=your-account-id
+```
+
+**获取 API Token**：[dash.cloudflare.com](https://dash.cloudflare.com) → My Profile → API Tokens
+
+---
+
+### GitLab
+
+GitLab Duo Chat，与 GitLab 深度集成。
+
+```bash
+/connect  # 搜索 GitLab
+
+# 企业版实例需设置
+export GITLAB_INSTANCE_URL=https://gitlab.company.com
+```
+
+**获取 Token**：[gitlab.com](https://gitlab.com) → Settings → Access Tokens
+
+> Token 格式：`glpat-...`
 
 ---
 

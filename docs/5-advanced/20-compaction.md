@@ -106,27 +106,29 @@ Context 百分比 = (input + output + reasoning + cache.read + cache.write) / mo
 
 ### 自动压缩什么时候触发？
 
-**核心判断函数**（源码位置：`src/session/compaction.ts:30-39`）：
+**核心判断函数**（源码位置：`src/session/compaction.ts:32-48`）：
 
 ```typescript
-触发条件: (input_tokens + cache_read_tokens + output_tokens) > (context_limit - min(output_limit, 32000))
+触发条件: token_count >= (input_limit - reserved)
+其中 reserved = min(20000, model_max_output)
 ```
 
 **公式解读**：
-1. 计算已使用的 token 总量（不含 cache.write，因为那是一次性成本）
-2. 计算可用空间：`context_limit - min(output_limit, 32000)`
-   - 预留 32,000 token 作为最大输出空间（OUTPUT_TOKEN_MAX 常量）
-   - 如果模型本身的 output limit 更小，就用模型限制
-3. 当已使用量超过可用空间时，触发自动压缩
+1. 计算已使用的 token 总量：`input + output + cache.read + cache.write`
+2. 计算预留空间（reserved）：默认取 `min(20,000, 模型最大输出)` 
+3. 计算可用空间：`input_limit - reserved`
+4. 当已使用量 >= 可用空间时，触发自动压缩
 
 **示例计算**：
-- 模型：Claude Sonnet 4.5（context = 200,000, output = 64,000）
-- 可用空间 = 200,000 - min(64,000, 32,000) = **168,000**
-- 当 `(input + cache_read + output) > 168,000` 时触发压缩
+- 模型：Claude Sonnet 4.5（context = 200,000, input = 200,000, output = 64,000）
+- 预留空间 = min(20,000, 64,000) = **20,000**
+- 可用空间 = 200,000 - 20,000 = **180,000**
+- 当 `token_count >= 180,000` 时触发压缩
 
-**为什么保留 32,000 token？**
-- 确保压缩后模型仍有足够空间生成新的回复
-- 避免压缩后立即又超限的死循环
+**为什么需要 reserve token buffer？**（v1.1.57 改进）
+- 确保 input window 有足够空间进行压缩操作
+- 压缩过程本身需要发送摘要请求，需要预留空间
+- 压缩更加可靠，减少"压缩失败"的情况
 
 ### 压缩流程详解
 
@@ -268,6 +270,24 @@ OpenCode 支持多层级配置，按优先级从高到低：
 | `OPENCODE_CONFIG` 环境变量 | 最高 | 自定义配置文件路径 |
 | `OPENCODE_CONFIG_DIR` 环境变量 | - | 自定义配置目录 |
 
+### 配置预留空间（v1.1.57 新增）
+
+压缩触发时会预留一定的 token 空间，确保压缩操作本身能顺利进行：
+
+**opencode.json**
+```json
+{
+  "compaction": {
+    "reserved": 30000
+  }
+}
+```
+
+**参数说明**：
+- 默认值：`min(20000, 模型最大输出)`
+- 作用：控制何时触发压缩（提前量）
+- 场景：如果压缩经常失败，可以增大此值
+
 ### 禁用自动压缩
 
 如果你不想让 OpenCode 自动压缩，可以在配置文件中设置：
@@ -370,11 +390,12 @@ Compaction Agent 使用的 prompt 是固定的。如果你发现压缩质量不�
 你学会了：
 
 1. **Context 百分比计算公式**：`(input + output + reasoning + cache.read + cache.write) / model.limit.context * 100`
-2. **自动压缩触发条件**：`(input + cache_read + output) > (context_limit - min(output_limit, 32000))`
+2. **自动压缩触发条件**：`token_count >= (input_limit - reserved)`，其中 reserved 默认 20,000
 3. **压缩的两步操作**：Prune（清除旧工具输出）+ Summarize（生成摘要）
 4. **主流模型的上下文限制**：从 128K（DeepSeek Chat）到 1M（Gemini 3 Flash）
-5. **控制压缩行为**：通过 `compaction.auto` 和 `compaction.prune` 配置
+5. **控制压缩行为**：通过 `compaction.auto`、`compaction.prune` 和 `compaction.reserved` 配置
 6. **自定义模型限制**：在 `provider.models` 中覆盖 `limit.context` 和 `limit.output`
+7. **v1.1.57 改进**：reserve token buffer 确保压缩更可靠
 
 ---
 
@@ -394,25 +415,24 @@ Compaction Agent 使用的 prompt 是固定的。如果你发现压缩质量不�
 <details>
 <summary><strong>点击展开查看源码位置</strong></summary>
 
-> 更新时间：2026-01-13
+> 更新时间：2026-02-14（v1.1.57）
 
 如果你对压缩机制的实现感兴趣，可以查看源码：
 
 | 功能 | 文件路径 | 行号 |
 |-----|---------|------|
 | 压缩核心逻辑 | [`src/session/compaction.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/session/compaction.ts) | 全文件 |
-| 自动触发判断 | [`src/session/compaction.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/session/compaction.ts#L30-L39) | 30-39 |
-| Prune 裁剪逻辑 | [`src/session/compaction.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/session/compaction.ts#L49-L90) | 49-90 |
+| 自动触发判断（含 reserved） | [`src/session/compaction.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/session/compaction.ts#L32-L48) | 32-48 |
+| Prune 裁剪逻辑 | [`src/session/compaction.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/session/compaction.ts#L58-L90) | 58-90 |
 | Context 百分比计算 | [`src/cli/cmd/tui/routes/session/sidebar.tsx`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/cli/cmd/tui/routes/session/sidebar.tsx#L51-L61) | 51-61 |
 | 压缩配置项 | [`src/config/config.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/config/config.ts#L927-L932) | 927-932 |
 | 模型 limit Schema | [`src/provider/provider.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/provider/provider.ts#L498-L501) | 498-501 |
 | 用户自定义 limit | [`src/provider/provider.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/provider/provider.ts#L722-L724) | 722-724 |
-| OUTPUT_TOKEN_MAX | [`src/session/prompt.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/session/prompt.ts#L53) | 53 |
 | Compaction Agent | [`src/agent/agent.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/agent/agent.ts#L122-L136) | 122-136 |
 | Compaction Prompt | [`src/agent/prompt/compaction.txt`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/agent/prompt/compaction.txt) | 全文件 |
 
 **关键常量**：
-- `OUTPUT_TOKEN_MAX = 32,000`：最大输出预留空间
+- `COMPACTION_BUFFER = 20,000`：默认预留空间（v1.1.57 新增）
 - `PRUNE_PROTECT = 40,000`：保护最近 40K tokens 的工具输出
 - `PRUNE_MINIMUM = 20,000`：最小裁剪阈值
 

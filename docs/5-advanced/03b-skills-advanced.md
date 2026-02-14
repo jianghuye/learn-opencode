@@ -757,6 +757,10 @@ cat my-skill/package.json
 
 ## 下一课预告
 
-> 下一课我们将学习快捷命令，一键触发常用任务。
-
-[继续学习：5.4 快捷命令](./04-commands)
+> 下一课我们将学习 **[Skill 高级模式](./03c-skills-patterns)**。
+>
+> 你会学到：
+> - Skill 与 MCP 协作模式（厨房 vs 菜谱）
+> - 五种工作流模式：顺序编排、多 MCP 协调、迭代优化等
+> - 分发共享策略（GitHub、API）
+> - 企业级 Skill 设计最佳实践

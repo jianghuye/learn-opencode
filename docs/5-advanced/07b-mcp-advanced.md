@@ -102,6 +102,65 @@ opencode mcp logout my-oauth-server
 opencode mcp debug my-oauth-server
 ```
 
+### 调试命令详解
+
+当 MCP 连接出问题时，用 `debug` 命令诊断：
+
+```bash
+opencode mcp debug my-oauth-server
+```
+
+**输出示例**：
+
+```
+MCP OAuth Debug
+
+Server: my-oauth-server
+URL: https://mcp.example.com/mcp
+Auth status: ✓ authenticated
+  Access token: eyJhbGciOiJSUzI1NiIs...
+  Expires: 2026-02-15T12:00:00.000Z
+  Refresh token: present
+
+Testing connection...
+HTTP response: 200 OK
+✓ Server responded successfully
+```
+
+**状态含义**：
+
+| 状态 | 说明 |
+|------|------|
+| `authenticated` | 已认证，可以正常使用 |
+| `expired` | Token 已过期，需要重新认证 |
+| `not authenticated` | 未认证，需要运行 `opencode mcp auth` |
+
+### 服务器状态图标
+
+`opencode mcp list` 输出中的图标含义：
+
+| 图标 | 状态 | 说明 |
+|------|------|------|
+| ✓ | connected | 已连接，工具可用 |
+| ○ | disabled | 已禁用，`enabled: false` |
+| ⚠ | needs_auth | 需要 OAuth 认证 |
+| ✗ | failed | 连接失败，查看错误信息 |
+
+**示例输出**：
+
+```
+MCP Servers
+
+✓ filesystem connected
+    npx -y @modelcontextprotocol/server-filesystem /projects
+✓ context7 connected
+    https://mcp.context7.com/mcp
+○ disabled-server disabled
+    npx -y some-command
+✗ failed-server failed
+    Connection timeout
+```
+
 ### 禁用 OAuth
 
 如果服务器使用 API Key 而非 OAuth：
@@ -207,6 +266,38 @@ MCP 工具注册时使用 `{服务器名}_{工具名}` 格式命名。
 ```
 
 这样 AI 会自动选择合适的 MCP 工具，无需每次在提示词中指定。
+
+---
+
+## 工具自动发现与更新
+
+### 工具命名规则
+
+MCP 工具注册时使用 `{服务器名}_{工具名}` 格式：
+
+```
+filesystem     服务器的 read_file 工具 → filesystem_read_file
+context7 服务器的 search 工具  → context7_search
+```
+
+### 自动发现机制
+
+配置 MCP 服务器后，OpenCode 会**自动发现**服务器提供的所有工具：
+
+1. 连接到 MCP 服务器
+2. 调用 `listTools` 获取工具列表
+3. 将工具转换为 OpenCode 可用格式
+4. 添加到当前会话的工具集中
+
+### 工具变更通知
+
+如果 MCP 服务器的工具列表发生变化（新增/删除工具），OpenCode 会**自动接收通知并更新**：
+
+- 服务器发送工具列表变更通知（`notifications/tools/list_changed`）
+- OpenCode 重新获取工具列表
+- 无需重启 OpenCode
+
+这意味着：升级 MCP 服务器版本后，新工具会自动可用。
 
 ---
 
@@ -410,6 +501,11 @@ use the gh_grep tool 搜索 SST 框架中如何配置自定义域名
 | 上下文快速耗尽 | 启用了太多 MCP 工具 | 禁用不常用的 MCP，使用按 Agent 启用 |
 | 工具名称冲突 | 多个 MCP 有同名工具 | 使用 `{服务器名}_{工具名}` 格式区分 |
 | 认证后仍显示 needs_auth | Token 存储失败 | 检查 `~/.local/share/opencode/mcp-auth.json` 权限 |
+| **命令格式错误** | `command` 写成字符串而非数组 | ❌ `"command": "npx xxx"` → ✓ `"command": ["npx", "-y", "xxx"]` |
+| **URL 格式错误** | URL 缺少协议前缀 | ❌ `"url": "example.com/mcp"` → ✓ `"url": "https://example.com/mcp"` |
+| **浏览器无法自动打开** | 在 SSH/远程环境下 | OpenCode 会显示 URL，手动复制到浏览器打开 |
+| **超时时间太短** | `timeout` 设为 1000ms | 远程服务器建议 5000-10000ms，默认 30000ms |
+| **忘记启用服务器** | `enabled: false` 但疑惑为什么不工作 | 默认就是启用的，检查是否误设为 `false` |
 
 ---
 
@@ -418,9 +514,12 @@ use the gh_grep tool 搜索 SST 框架中如何配置自定义域名
 你学会了：
 
 1. **OAuth 认证**：自动处理或手动配置客户端凭证
-2. **权限管理**：使用 `permission` 控制工具访问
-3. **规则集成**：在 AGENTS.md 中配置默认 MCP 使用
-4. **常用 MCP**：Sentry、Context7、Grep、Postgres 等
+2. **调试命令**：`opencode mcp debug` 诊断连接问题
+3. **状态图标**：✓ ○ ⚠ ✗ 四种状态的含义
+4. **权限管理**：使用 `permission` 控制工具访问
+5. **工具自动发现**：工具命名规则和变更通知机制
+6. **规则集成**：在 AGENTS.md 中配置默认 MCP 使用
+7. **常用 MCP**：Sentry、Context7、Grep、Postgres 等
 
 ---
 

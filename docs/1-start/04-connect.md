@@ -83,29 +83,9 @@ prerequisite:
 | Claude（Anthropic 官方） | 较贵 | 常需代理 | 复杂任务、英文项目 | [1.4e 连接 Claude](./04e-claude) |
 | 第三方中转 | 取决于中转 | 取决于中转 | 有 `baseURL + key` | [1.4f 第三方中转](./04f-claudecode-relay) |
 | Ollama 本地模型 | 免费 | 离线 | 隐私敏感、离线场景 | [1.4g 连接 Ollama](./04g-ollama) |
-| 通义千问（阿里云） | 中等 | 国内直连 | 阿里生态 | [1.4h 连接通义千问](./04i-alibaba) |
-
----
-
-## 切换模型
-
-配置完多个模型后，用 `/models` 命令随时切换：
-
-```
-/models
-```
-
-用 <kbd>↑</kbd> <kbd>↓</kbd> 选择，按 <kbd>Enter</kbd> 确认。
-
-::: tip 设置默认模型
-在 `opencode.json` 中配置 `model` 字段，可以设置默认使用的模型：
-
-```json
-{
-  "model": "deepseek/deepseek-chat"
-}
-```
-:::
+| OpenAI（GPT / Codex） | 较贵 | 常需代理 | 通用场景 | [1.4h 连接 OpenAI](./04h-openai) |
+| 通义千问（阿里云） | 中等 | 国内直连 | 阿里生态 | [1.4i 连接通义千问](./04i-alibaba) |
+| GitHub Copilot | 需已有订阅 | 可直连 | 复用 Copilot 订阅 | [1.4j GitHub Copilot](./04j-github-copilot) |
 
 ---
 
@@ -135,12 +115,100 @@ prerequisite:
 
 ---
 
-## 在 OpenCode 里你会用到的两个命令
+## 两种配置方式
 
-- `/connect`：添加/切换提供商并录入 API Key
-- `/models`：选择具体模型（不同提供商会提供不同模型）
+OpenCode 提供两种配置模型提供商的方式：
 
-> 提示：凭证通常会被安全保存到本地（例如 `~/.local/share/opencode/auth.json`）。
+| 方式 | 场景 | 命令 |
+|------|------|------|
+| **TUI 内** | 启动 OpenCode 后在界面里配置 | `/connect` |
+| **终端 CLI** | 启动前在命令行配置 | `opencode auth login` |
+
+两种方式效果一样，选你顺手的用。
+
+### 方式一：TUI 内用 /connect
+
+在 OpenCode 界面输入：
+
+```
+/connect
+```
+
+会弹出提供商选择界面，按提示操作即可。
+
+### 方式二：终端用 opencode auth login
+
+在启动 OpenCode **之前**，在终端运行：
+
+```bash
+opencode auth login
+```
+
+你会看到提供商列表：
+
+```
+? Select provider
+❯ OpenCode (recommended)
+  Anthropic (Claude Max or API key)
+  GitHub Copilot (ChatGPT Plus/Pro or API key)
+  OpenAI (ChatGPT Plus/Pro or API key)
+  Google
+  ...
+```
+
+选择后按提示输入 API Key 或完成 OAuth。
+
+### 查看已配置的提供商
+
+```bash
+opencode auth list
+# 或简写
+opencode auth ls
+```
+
+你会看到：
+
+```
+Credentials ~/.local/share/opencode/auth.json
+√ OpenCode api
+
+Environment
+√ OpenCode OPENCODE_API_KEY
+```
+
+### 认证优先级
+
+OpenCode 按以下顺序查找认证：
+
+1. **环境变量**（如 `ANTHROPIC_API_KEY`、`OPENAI_API_KEY`）
+2. **auth.json 文件**（`~/.local/share/opencode/auth.json`）
+3. **配置文件**中的认证信息
+
+::: tip 提示
+凭证存储位置：`~/.local/share/opencode/auth.json`（所有平台统一，遵循 XDG 规范）
+:::
+
+---
+
+## 切换模型
+
+配置完多个模型后，在 TUI 内用 `/models` 命令随时切换：
+
+```
+/models
+```
+
+用 <kbd>↑</kbd> <kbd>↓</kbd> 选择，按 <kbd>Enter</kbd> 确认。
+
+::: tip 设置默认模型
+在 `opencode.json` 中配置 `model` 字段，可以设置默认使用的模型：
+
+```json
+{
+  "model": "deepseek/deepseek-chat"
+}
+```
+:::
 
 ---
 

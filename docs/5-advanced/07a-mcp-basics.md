@@ -69,13 +69,66 @@ MCP（Model Context Protocol）是一种标准协议，让 AI 能调用外部工
 
 ---
 
+## 配置文件位置
+
+OpenCode 会在多个位置查找配置文件，**后加载的会覆盖先加载的**（优先级从低到高）：
+
+| 加载顺序 | 位置 | 用途 |
+|----------|------|------|
+| 1（最低） | `~/.config/opencode/opencode.json` | 全局配置，所有项目共享 |
+| 2 | `opencode.json` | 项目根目录配置 |
+| 3（最高） | `.opencode/opencode.json` | 项目级配置（推荐） |
+
+::: tip 为什么推荐 .opencode/opencode.json？
+它有最高优先级，且放在 `.opencode/` 目录下更整洁，方便与其他配置（如 agents、commands）一起管理。
+:::
+
+---
+
+## 交互式添加：opencode mcp add
+
+不想手动编辑 JSON？用交互式命令添加 MCP：
+
+```bash
+opencode mcp add
+```
+
+按提示操作：
+
+```
+? Location: (Use arrow keys)
+❯ Current project
+    /path/to/project/.opencode/opencode.json
+  Global
+    ~/.config/opencode/opencode.json
+
+? MCP server name: filesystem
+
+? Select MCP server type:
+❯ Local
+  Remote
+
+? Enter command to run:
+opencode x @modelcontextprotocol/server-filesystem /path/to/allowed/dir
+```
+
+> ⚠️ **注意**：位置选择仅在 Git 项目中显示。非 Git 项目会直接写入全局配置。
+
+**你应该看到**：
+
+```
+✓ MCP server "filesystem" added successfully
+```
+
+---
+
 ## 本地 MCP 服务器
 
 本地 MCP 服务器运行在你的机器上，通过 stdio 通信。
 
 ### 配置方式
 
-在 `opencode.jsonc` 的 `mcp` 下配置：
+在 `opencode.json` 或 `.opencode/opencode.json` 的 `mcp` 下配置：
 
 ```jsonc
 {
@@ -251,9 +304,11 @@ use the gh_grep tool 搜索如何在 Node.js 中实现 JWT 验证
 你学会了：
 
 1. **MCP 协议**：让 AI 连接外部服务的标准协议
-2. **本地 MCP**：`type: "local"` + `command` 数组
-3. **远程 MCP**：`type: "remote"` + `url`
-4. **连接状态**：5 种状态及查看方法
+2. **配置位置**：项目级 vs 全局级，团队共享 vs 个人偏好
+3. **交互式添加**：`opencode mcp add` 命令
+4. **本地 MCP**：`type: "local"` + `command` 数组
+5. **远程 MCP**：`type: "remote"` + `url`
+6. **连接状态**：5 种状态及查看方法
 
 ---
 

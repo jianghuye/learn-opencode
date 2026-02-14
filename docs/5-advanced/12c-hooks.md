@@ -96,6 +96,16 @@ prerequisite:
 
 ---
 
+### 🆕 v1.1.65 新增 Hook
+
+| Hook | 说明 | 用途 |
+|-----|------|------|
+| `tool.definition` | 修改工具定义 | 自定义工具描述、调整参数 Schema |
+| `command.execute.before` | 命令执行前拦截 | 修改命令参数、添加日志 |
+| `shell.env` | Shell 执行前 | 注入环境变量 |
+
+---
+
 ## 跟我做
 
 > 一步一步来，假设你会犯错
@@ -263,6 +273,42 @@ export const CompactionPlugin: Plugin = async () => {
 
 ---
 
+### 第 6 步：修改工具定义（v1.1.65+）
+
+**为什么**  
+在某些场景下，你可能需要修改工具的描述或参数 Schema，让 AI 更好地理解工具用途，或添加额外约束。
+
+```ts
+// .opencode/plugin/tool-definition.ts
+import type { Plugin } from "@opencode-ai/plugin"
+
+export const ToolDefinitionPlugin: Plugin = async () => {
+  return {
+    "tool.definition": async (input, output) => {
+      // 为 read 工具添加中文描述
+      if (input.toolID === "read") {
+        output.description = "读取文件内容。支持文本文件和图片。路径必须是绝对路径。"
+      }
+
+      // 为 bash 工具添加安全提示
+      if (input.toolID === "bash") {
+        output.description += "\n\n⚠️ 注意：危险命令（如 rm -rf）需要用户确认。"
+      }
+
+      // 修改参数 Schema（例如添加默认值或约束）
+      if (input.toolID === "write" && output.parameters?.properties?.filePath) {
+        output.parameters.properties.filePath.description = "文件绝对路径，必须以 / 开头"
+      }
+    },
+  }
+}
+```
+
+**你应该看到**：  
+AI 调用工具时会使用修改后的描述和参数定义。
+
+---
+
 ## 检查点 ✅
 
 > 全部通过才能继续；任一项失败，回到第 X 步重来
@@ -273,6 +319,7 @@ export const CompactionPlugin: Plugin = async () => {
 - [ ] 尝试读取 `.env` 时抛出了错误
 - [ ] 不同 Agent 会话的参数有变化
 - [ ] 权限请求的行为符合预期
+- [ ] （v1.1.65+）工具定义被成功修改
 
 ---
 
@@ -323,6 +370,9 @@ export const CompactionPlugin: Plugin = async () => {
 | `permission.ask` | 权限请求时 | 自动允许/拒绝 | ✅ |
 | `tool` | 注册工具 | 添加自定义工具 | - |
 | `experimental.session.compacting` | 会话压缩前 | 注入项目关键信息 | ✅ |
+| `tool.definition` | 工具注册时 | 修改工具描述/参数 | ✅ |
+| `command.execute.before` | 命令执行前 | 拦截/修改命令参数 | ✅ |
+| `shell.env` | Shell 执行前 | 注入环境变量 | ✅ |
 | `auth` | 认证流程 | 自定义认证方式 | - |
 
 ---
@@ -353,7 +403,9 @@ export const CompactionPlugin: Plugin = async () => {
 
 | 功能 | 文件路径 | 行号 |
 |-----|---------|------|
-| Hook 类型定义 | [`packages/plugin/src/index.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/plugin/src/index.ts) | 148-218 |
+| Hook 类型定义 | [`packages/plugin/src/index.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/plugin/src/index.ts) | 148-231 |
+| `tool.definition` Hook 定义 | [`packages/plugin/src/index.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/plugin/src/index.ts) | 227-230 |
+| `tool.definition` Hook 触发 | [`packages/opencode/src/tool/registry.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/tool/registry.ts) | 157 |
 | 插件加载逻辑 | [`packages/opencode/src/plugin/index.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/plugin/index.ts) | 20-82 |
 | 插件目录扫描 | [`packages/opencode/src/config/config.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/config/config.ts) | 322-335 |
 | 插件去重逻辑 | [`packages/opencode/src/config/config.ts`](https://github.com/anomalyco/opencode/blob/dev/packages/opencode/src/config/config.ts) | 369-387 |
@@ -373,6 +425,9 @@ export interface Hooks {
   "permission.ask"?: (input: Permission, output: {...}) => Promise<void>
   "tool.execute.before"?: (input: {...}, output: {...}) => Promise<void>
   "tool.execute.after"?: (input: {...}, output: {...}) => Promise<void>
+  "command.execute.before"?: (input: { command: string; sessionID: string; arguments: string }, output: {...}) => Promise<void>
+  "shell.env"?: (input: { cwd: string }, output: { env: Record<string, string> }) => Promise<void>
+  "tool.definition"?: (input: { toolID: string }, output: { description: string; parameters: any }) => Promise<void>
   "experimental.chat.messages.transform"?: (input: {}, output: {...}) => Promise<void>
   "experimental.chat.system.transform"?: (input: {}, output: {...}) => Promise<void>
   "experimental.session.compacting"?: (input: {...}, output: {...}) => Promise<void>

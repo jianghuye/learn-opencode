@@ -156,6 +156,7 @@ export default defineConfig({
               { text: 'Ollama（本地）', link: '/1-start/04g-ollama' },
               { text: 'OpenAI（GPT / Codex）', link: '/1-start/04h-openai' },
               { text: '通义千问', link: '/1-start/04i-alibaba' },
+              { text: 'GitHub Copilot', link: '/1-start/04j-github-copilot' },
             ]
           },
           { text: '1.5 自动更新', link: '/1-start/05-update' },
@@ -168,6 +169,7 @@ export default defineConfig({
           { text: '阶段导读', link: '/2-daily/' },
           { text: '2.1 界面与操作', link: '/2-daily/01-interface' },
           { text: '2.1b 如何复制内容', link: '/2-daily/01b-copy-paste' },
+          { text: '2.1c AI 的基础工具', link: '/2-daily/01c-basic-tools' },
           { text: '2.2 管理对话', link: '/2-daily/02-sessions' },
           { text: '2.3 常用快捷键', link: '/2-daily/03-shortcuts' },
           { text: '2.4 全局提示词', link: '/2-daily/04-global-rules' },
@@ -258,6 +260,7 @@ export default defineConfig({
             items: [
               { text: '5.3a Skill 基础', link: '/5-advanced/03a-skills-basics' },
               { text: '5.3b Skill 进阶', link: '/5-advanced/03b-skills-advanced' },
+              { text: '5.3c 高级模式', link: '/5-advanced/03c-skills-patterns' },
             ]
           },
           { text: '5.4 快捷命令', link: '/5-advanced/04-commands' },
@@ -318,10 +321,12 @@ export default defineConfig({
           { text: '5.16 会话分享', link: '/5-advanced/16-share' },
           { text: '5.17 内置工具', link: '/5-advanced/17-tools' },
           { text: '5.18 代码格式化器', link: '/5-advanced/18-formatters' },
-          { text: '5.19 LSP 服务器', link: '/5-advanced/19-lsp' },
+          { text: '5.19 LSP 代码智能', link: '/5-advanced/19-lsp' },
           { text: '5.20 上下文压缩', link: '/5-advanced/20-compaction' },
           { text: '5.21 思考深度配置', link: '/5-advanced/21-thinking-depth' },
           { text: '5.22 调试与诊断', link: '/5-advanced/22-debugging' },
+          { text: '5.23 网络搜索与获取', link: '/5-advanced/23-web-search' },
+          { text: '5.24 CLI 自动化', link: '/5-advanced/24-cli-automation' },
         ]
       },
       {
@@ -347,6 +352,8 @@ export default defineConfig({
         collapsed: true,
         items: [
           { text: '更新日志', link: '/changelog/' },
+          { text: 'v1.2.1', link: '/changelog/v1.2.1' },
+          { text: 'v1.2.0', link: '/changelog/v1.2.0' },
           { text: 'v1.1.65', link: '/changelog/v1.1.65' },
           { text: 'v1.1.64', link: '/changelog/v1.1.64' },
           { text: 'v1.1.63', link: '/changelog/v1.1.63' },

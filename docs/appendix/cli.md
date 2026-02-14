@@ -35,6 +35,7 @@ description: OpenCode 命令行工具完整参考
 | `opencode export` | 导出会话 |
 | `opencode import` | 导入会话 |
 | `opencode github` | GitHub 集成 |
+| `opencode pr` | 拉取并处理 PR |
 | `opencode acp` | ACP 服务器 |
 | `opencode upgrade` | 升级版本 |
 | `opencode uninstall` | 卸载 OpenCode |
@@ -437,7 +438,7 @@ opencode import <file>
 opencode import session.json
 
 # 从分享 URL 导入
-opencode import https://opncd.ai/s/abc123
+opencode import https://opncd.ai/share/abc123
 ```
 
 ---
@@ -465,6 +466,37 @@ opencode github <subcommand>
 ```bash
 # 安装 Actions
 opencode github install
+```
+
+---
+
+### opencode pr
+
+拉取并切换到 GitHub PR 分支，然后启动 OpenCode。
+
+```bash
+opencode pr <number>
+```
+
+这个命令会：
+1. 使用 `gh pr checkout` 拉取 PR 到本地分支 `pr/<PR号>`
+2. 如果是 Fork PR，自动添加远程仓库
+3. 如果 PR 描述包含 OpenCode 会话链接，自动导入
+4. 启动 OpenCode TUI
+
+**前置条件**：
+- 已安装 `gh` CLI 并认证
+- 当前目录是 Git 仓库
+
+**示例**：
+```bash
+# 拉取 PR #123 并启动 OpenCode
+opencode pr 123
+
+# 你会看到：
+# Fetching and checking out PR #123...
+# Successfully checked out PR #123 as branch 'pr/123'
+# Starting opencode...
 ```
 
 ---
@@ -577,6 +609,28 @@ opencode uninstall --dry-run
 | `OPENCODE_ENABLE_EXA` | boolean | 启用 Exa 网页搜索 |
 | `OPENCODE_CLIENT` | string | 客户端标识（默认 `cli`） |
 | `OPENCODE_GIT_BASH_PATH` | string | Windows Git Bash 路径 |
+
+### 服务器安全
+
+用于 `opencode serve` 和 `opencode web` 的认证配置：
+
+| 变量 | 类型 | 说明 |
+|------|------|------|
+| `OPENCODE_SERVER_PASSWORD` | string | 服务器密码（**强烈建议设置**） |
+| `OPENCODE_SERVER_USERNAME` | string | 用户名（默认 `opencode`） |
+
+::: warning 安全提醒
+如果不设置 `OPENCODE_SERVER_PASSWORD`，服务器将**无认证保护**，任何人都能访问。
+:::
+
+**示例**：
+```bash
+# 设置服务器认证
+export OPENCODE_SERVER_PASSWORD=your-secure-password
+export OPENCODE_SERVER_USERNAME=admin
+
+opencode serve --hostname 0.0.0.0
+```
 
 ### 提供商 API Key
 

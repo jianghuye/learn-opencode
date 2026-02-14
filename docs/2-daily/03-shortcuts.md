@@ -121,7 +121,7 @@ Leader 键类似于 Vim 的 `<Leader>` 或游戏里的"组合键"。它不是一
 |--------|------|------|
 | <kbd>Enter</kbd> | 发送消息 | 回车发送 |
 | <kbd>Shift</kbd>+<kbd>Enter</kbd> | **换行（不发送）** | 写多行提示词时用 |
-| <kbd>Ctrl</kbd>+<kbd>C</kbd> | 清空输入 / 退出 | 输入框有内容时清空，没内容时退出 |
+| <kbd>Ctrl</kbd>+<kbd>C</kbd> | 清空输入 / 关闭对话框 / 退出 | 详见下方说明 |
 | <kbd>Escape</kbd> | 中断 AI 响应 | AI 在生成时按，立即停止。**按两次可强制中断** |
 | <kbd>↑</kbd> / <kbd>↓</kbd> | 翻阅历史输入 | **输入框为空时**，按上下键可找回之前发过的消息 |
 | <kbd>Tab</kbd> | 切换 Agent | 在 Plan/Build/不同 Agent 间切换 |
@@ -137,7 +137,8 @@ Leader 键类似于 Vim 的 `<Leader>` 或游戏里的"组合键"。它不是一
 选一个顺手的记住就行。
 :::
 
-::: details 📦 Ctrl+C 的两种行为
+::: details 📦 Ctrl+C 的三种行为（v1.1.58 更新）
+- **有弹出对话框时**：关闭对话框（如确认框、选择框等）
 - **输入框有内容时**：清空输入框（不退出）
 - **输入框为空时**：退出 OpenCode
 
@@ -227,7 +228,7 @@ OpenCode 完全兼容 Readline，让你在输入框里也能用熟悉的方式�
 ### 第 3 步：练习 Ctrl+C
 
 **为什么**  
-快速清空输入，或退出 OpenCode。
+快速清空输入、关闭对话框，或退出 OpenCode。
 
 **场景 A - 清空输入**：
 1. 在输入框输入一些文字
@@ -235,8 +236,14 @@ OpenCode 完全兼容 Readline，让你在输入框里也能用熟悉的方式�
 
 **你应该看到**：输入框被清空
 
-**场景 B - 退出应用**：
-1. 确保输入框是空的
+**场景 B - 关闭对话框**：
+1. 触发一个对话框（如按 <kbd>Ctrl</kbd>+<kbd>X</kbd> → <kbd>L</kbd> 打开会话列表）
+2. 按 <kbd>Ctrl</kbd>+<kbd>C</kbd>
+
+**你应该看到**：对话框关闭，返回正常对话界面
+
+**场景 C - 退出应用**：
+1. 确保输入框是空的，且没有弹出对话框
 2. 按 <kbd>Ctrl</kbd>+<kbd>C</kbd>
 
 **你应该看到**：OpenCode 退出
@@ -292,7 +299,7 @@ AI 回复太长或方向错误时及时止损。
 
 - [ ] <kbd>Shift</kbd>+<kbd>Enter</kbd> 能换行而不发送
 - [ ] <kbd>↑</kbd> 能翻阅历史输入（输入框为空时）
-- [ ] <kbd>Ctrl</kbd>+<kbd>C</kbd> 能清空输入
+- [ ] <kbd>Ctrl</kbd>+<kbd>C</kbd> 能清空输入、关闭对话框
 - [ ] <kbd>Ctrl</kbd>+<kbd>X</kbd> → <kbd>N</kbd> 能新建会话（注意要松开再按 N）
 - [ ] <kbd>Ctrl</kbd>+<kbd>X</kbd> → <kbd>L</kbd> 能打开会话列表
 - [ ] <kbd>Escape</kbd> 能中断 AI 响应
@@ -317,7 +324,7 @@ AI 回复太长或方向错误时及时止损。
 
 ```
 回车发送，Shift 换行
-上箭头翻历史，Ctrl+C 清输入（不是复制！）
+上箭头翻历史，Ctrl+C 关弹框清输入
 新建 N，列表 L，模型 M 要牢记
 撤销 U，重做 R，复制 Y 不费力
 Escape 中断响应快
@@ -333,7 +340,7 @@ Ctrl+Z 会挂起，别当撤销用
 
 1. **换行技巧**：<kbd>Shift</kbd>+<kbd>Enter</kbd> 换行，<kbd>Enter</kbd> 发送
 2. **历史记录**：输入框为空时，<kbd>↑</kbd>/<kbd>↓</kbd> 翻阅历史
-3. **Ctrl+C**：清空输入（有内容）或退出（无内容）
+3. **Ctrl+C**：关闭对话框 / 清空输入（有内容）或退出（无内容）
 4. **Leader 键机制**：<kbd>Ctrl</kbd>+<kbd>X</kbd> → 松开 → 字母键
 5. **会话管理**：N（新建）、L（列表）、U（撤销）
 6. **程序员福利**：Readline 风格快捷键全兼容

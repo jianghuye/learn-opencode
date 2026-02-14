@@ -31,8 +31,9 @@ prerequisite:
 
 - 配置界面（TUI、快捷键、服务器）
 - 配置行为（分享、压缩、监视器）
-- 配置功能（工具、权限、Agent、命令、MCP 等）
+- 配置功能（Provider、工具、权限、Agent、命令、MCP 等）
 - 使用实验性功能
+- 为模型配置自定义 API URL
 
 ---
 
@@ -41,6 +42,7 @@ prerequisite:
 - 想自定义快捷键
 - 想控制 AI 能用哪些工具
 - 想批量禁用某些 MCP 工具
+- 想为模型配置私有部署的 API
 - 想知道还有什么隐藏配置
 
 ---
@@ -72,7 +74,7 @@ prerequisite:
 
 | 字段 | 说明 | 默认值 |
 |-----|------|-------|
-| `scroll_speed` | 滚动速度倍数（最小 0.001） | 1 |
+| `scroll_speed` | 滚动速度倍数（最小 0.001） | 3 |
 | `scroll_acceleration.enabled` | 启用 macOS 风格加速滚动 | false |
 | `diff_style` | 差异显示样式 | `"auto"` |
 
@@ -155,6 +157,7 @@ prerequisite:
     "port": 4096,
     "hostname": "0.0.0.0",
     "mdns": true,
+    "mdnsDomain": "opencode.local",
     "cors": ["http://localhost:5173"]
   }
 }
@@ -165,6 +168,7 @@ prerequisite:
 | `port` | 监听端口 |
 | `hostname` | 监听地址（启用 mdns 时默认 `0.0.0.0`） |
 | `mdns` | 启用 mDNS 服务发现（局域网设备可发现） |
+| `mdnsDomain` | mDNS 服务的自定义域名（默认 `opencode.local`） |
 | `cors` | 允许的 CORS 来源列表 |
 
 ---
@@ -195,7 +199,8 @@ prerequisite:
 {
   "compaction": {
     "auto": true,
-    "prune": true
+    "prune": true,
+    "reserved": 10000
   }
 }
 ```
@@ -204,6 +209,7 @@ prerequisite:
 |-----|------|-------|
 | `auto` | 上下文满时自动压缩 | true |
 | `prune` | 删除旧工具输出节省 token | true |
+| `reserved` | 压缩时的 Token 缓冲区，预留足够窗口避免溢出 | - |
 
 ### Watcher 配置
 
@@ -243,6 +249,91 @@ prerequisite:
 
 ## 功能配置
 
+### Provider 配置
+
+配置 AI 提供商及其模型：
+
+```jsonc
+{
+  "provider": {
+    "anthropic": {
+      "options": {
+        "apiKey": "{env:ANTHROPIC_API_KEY}",
+        "baseURL": "https://custom-anthropic.example.com/v1",
+        "timeout": 600000,
+        "setCacheKey": true
+      },
+      "models": {
+        "claude-sonnet-4-5": {
+          "provider": {
+            "api": "https://custom-api.example.com/v1"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+#### Provider 级别选项
+
+| 字段 | 说明 |
+|-----|------|
+| `options.apiKey` | API 密钥，支持 `{env:VAR_NAME}` 环境变量替换 |
+| `options.baseURL` | 自定义 API 基础 URL（适用于代理或私有部署） |
+| `options.timeout` | 请求超时时间（毫秒），设为 `false` 禁用 |
+| `options.setCacheKey` | 启用 Prompt Caching（仅 Anthropic） |
+| `options.enterpriseUrl` | GitHub Enterprise URL（仅 Copilot） |
+
+#### 模型级别自定义 API URL
+
+> v1.1.60+ 新增
+
+为单个模型配置独立的 API URL：
+
+```jsonc
+{
+  "provider": {
+    "openai": {
+      "models": {
+        "gpt-4o": {
+          "provider": {
+            "api": "https://api.custom-openai.com/v1"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+适用场景：
+- 使用同一 provider 的不同部署（如不同区域的 Azure OpenAI）
+- 测试私有部署的模型
+- 配置模型专用的代理服务器
+
+#### 黑白名单
+
+控制可用模型：
+
+```json
+{
+  "provider": {
+    "openai": {
+      "whitelist": ["gpt-4o", "gpt-4o-mini"],
+      "blacklist": ["gpt-3.5-turbo"]
+    }
+  }
+}
+```
+
+| 字段 | 说明 |
+|-----|------|
+| `whitelist` | 只允许这些模型 |
+| `blacklist` | 禁用这些模型 |
+
+> `whitelist` 和 `blacklist` 互斥，同时存在时 `whitelist` 优先。
+
 ### Tools 配置
 
 控制 LLM 可用的工具：
@@ -261,7 +352,7 @@ prerequisite:
 
 #### 通配符
 
-使用通配符批量控制：
+`tools` 的 key 最终会转换为 `permission` 规则，因此通配符能通过权限系统间接生效：
 
 ```json
 {
@@ -272,6 +363,8 @@ prerequisite:
 ```
 
 禁用名为 `mymcp` 的 MCP 服务器的所有工具。
+
+> 推荐直接使用 `permission` 配置来实现通配符控制，提供更细粒度的 allow/ask/deny 选项。
 
 #### Tools vs Permission
 
@@ -343,8 +436,9 @@ prerequisite:
 |-----|------|------|
 | `temperature` | number | 创造性参数（0-1），越低越确定 |
 | `top_p` | number | 核采样参数（0-1） |
+| `variant` | string | 默认模型变体（仅在使用该 Agent 配置的模型时生效） |
 | `steps` | number | 最大迭代步数 |
-| `color` | string | 十六进制颜色（如 `#FF5733`） |
+| `color` | string | 十六进制颜色（如 `#FF5733`）或主题色名（如 `primary`） |
 | `hidden` | boolean | 从 @ 菜单隐藏（仅 subagent 生效） |
 
 > `maxSteps` 已废弃，请使用 `steps`。
@@ -431,11 +525,20 @@ prerequisite:
     "sentry": {
       "type": "remote",
       "url": "https://mcp.sentry.dev/mcp",
-      "oauth": {}
+      "headers": {
+        "Authorization": "Bearer your-token"
+      },
+      "oauth": {
+        "clientId": "xxx",
+        "clientSecret": "xxx",
+        "scope": "read write"
+      }
     }
   }
 }
 ```
+
+远程 MCP 服务器支持 `headers`（自定义请求头）和 `oauth`（OAuth 认证）。`oauth` 设为 `false` 可禁用自动 OAuth 检测。
 
 详细配置见 [5.7 MCP 扩展](./07a-mcp-basics)。
 
@@ -502,24 +605,8 @@ prerequisite:
 ```json
 {
   "experimental": {
-    "hook": {
-      "file_edited": {
-        "*.ts": [
-          {
-            "command": ["prettier", "--write", "$FILE"],
-            "environment": {}
-          }
-        ]
-      },
-      "session_completed": [
-        {
-          "command": ["notify-send", "OpenCode", "会话完成"]
-        }
-      ]
-    },
     "batch_tool": true,
     "openTelemetry": true,
-    "chatMaxRetries": 3,
     "continue_loop_on_deny": false
   }
 }
@@ -527,14 +614,18 @@ prerequisite:
 
 | 字段 | 说明 |
 |-----|------|
-| `hook.file_edited` | 文件编辑后触发的钩子 |
-| `hook.session_completed` | 会话完成后触发的钩子 |
 | `batch_tool` | 启用批量工具 |
 | `openTelemetry` | 启用 OpenTelemetry 追踪 |
-| `chatMaxRetries` | 聊天失败重试次数 |
+| `disable_paste_summary` | 禁用粘贴大段文本时的自动摘要 |
+| `primary_tools` | 仅限 Primary Agent 使用的工具列表 |
 | `continue_loop_on_deny` | 工具被拒绝时继续循环 |
+| `mcp_timeout` | MCP 请求的全局超时时间（毫秒） |
 
 > ⚠️ 实验性功能可能随时变更或移除。
+
+::: tip 关于 Hook（事件钩子）
+Hook 功能通过**插件系统**实现，不是 `experimental` 配置。详见 [5.12c Hooks 机制](./12c-hooks)。
+:::
 
 ---
 
@@ -556,6 +647,15 @@ prerequisite:
         "apiKey": "{env:ANTHROPIC_API_KEY}",
         "timeout": 600000,
         "setCacheKey": true
+      }
+    },
+    "openai": {
+      "models": {
+        "gpt-4o": {
+          "provider": {
+            "api": "https://custom-api.example.com/v1"
+          }
+        }
       }
     }
   },
@@ -652,6 +752,8 @@ prerequisite:
 | 用了 `formatters` | 键名错误 | 应为 `formatter`（单数） |
 | 用了 `tui.theme` | 键名错误 | 应直接用 `theme` |
 | tools 配置不生效 | 遗留配置 | 推荐使用 `permission` |
+| baseURL 不生效 | 位置错误 | 应在 `provider.options.baseURL` 而非顶层 |
+| 模型 API URL 不生效 | 字段错误 | 模型级别用 `provider.api`，Provider 级别用 `options.baseURL` |
 | 快捷键冲突 | 与终端冲突 | 使用 leader 键前缀 |
 | LSP 自定义失败 | 缺少 extensions | 自定义 LSP 必须指定 extensions |
 
@@ -677,8 +779,9 @@ prerequisite:
 
 1. 界面配置：TUI、快捷键、服务器
 2. 行为配置：分享、压缩、监视器、指令文件
-3. 功能配置：工具、权限、Agent、命令、格式化器、MCP、插件、LSP
-4. 实验性功能：钩子、OpenTelemetry 等
+3. 功能配置：Provider、工具、权限、Agent、命令、格式化器、MCP、插件、LSP
+4. 实验性功能：批量工具、OpenTelemetry 等
+5. 自定义模型 API URL（v1.1.60+）
 
 ---
 

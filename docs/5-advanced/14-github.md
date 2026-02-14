@@ -403,6 +403,38 @@ OpenCode 支持处理来自 Fork 仓库的 PR。处理逻辑与本地 PR 略有�
 
 ## CLI 命令
 
+### opencode pr
+
+快速检出 PR 并启动 OpenCode：
+
+```bash
+opencode pr <PR号>
+```
+
+执行流程：
+1. 自动 fetch PR 分支
+2. 创建本地分支 `pr/<PR号>`
+3. 检出到该分支
+4. 自动启动 OpenCode
+
+**示例**：
+
+```bash
+# 检出 PR #123
+opencode pr 123
+```
+
+**Fork PR 处理**：
+
+对于来自 Fork 的 PR，命令会自动：
+1. 添加 Fork 作为 remote
+2. 设置 upstream 跟踪
+3. 确保 push 到正确的仓库
+
+**导入关联的 Session**：
+
+如果 PR 描述中包含 OpenCode Session 链接（如 `https://opncd.ai/s/abc123`），命令会自动导入会话历史，让你继续之前的对话上下文。
+
 ### opencode github install
 
 交互式安装 GitHub Agent：

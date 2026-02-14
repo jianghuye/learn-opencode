@@ -21,11 +21,23 @@ description: opencode.json 配置文件的详细参考手册，涵盖所有可�
 
 OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前者）：
 
-1. **远程/默认配置**：从 `.well-known/opencode` 加载（如果配置了远程 Auth）
-2. **全局配置**：`~/.config/opencode/opencode.json`
-3. **自定义全局路径**：`OPENCODE_CONFIG` 环境变量指定的路径
-4. **项目配置**：项目根目录下的 `opencode.json` 或 `opencode.jsonc`
-5. **内联配置**：`OPENCODE_CONFIG_CONTENT` 环境变量的内容
+| 优先级 | 位置 | 说明 |
+|-------|-----|------|
+| 1（最低） | 远程 `.well-known/opencode` | 远程组织默认配置（通过 Auth 机制获取） |
+| 2 | `~/.config/opencode/opencode.json` | 全局用户配置 |
+| 3 | `OPENCODE_CONFIG` 环境变量 | 自定义配置文件路径 |
+| 4 | `./opencode.json` | 项目根目录配置 |
+| 5 | `./.opencode/opencode.json` | 项目 .opencode 目录配置 |
+| 6 | `OPENCODE_CONFIG_CONTENT` 环境变量 | 内联配置内容（JSON 字符串） |
+| 7（最高） | 受管配置目录 | 企业部署，管理员控制 |
+
+**受管配置目录**（企业部署，最高优先级）：
+
+| 平台 | 路径 |
+|------|------|
+| macOS | `/Library/Application Support/opencode` |
+| Windows | `%ProgramData%\opencode` |
+| Linux | `/etc/opencode` |
 
 ---
 
@@ -40,8 +52,8 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 | `username` | string | 在对话中显示的用户名。如果不设置，使用系统用户名。 | 系统用户 |
 | `theme` | string | 界面主题名称。详见 [主题列表](../5-advanced/06a-themes)。 | - |
 | `autoupdate` | boolean \| "notify" | 自动更新行为。`true`=自动更新，`false`=禁用，`"notify"`=仅通知。 | - |
-| `logLevel` | enum | 日志级别。可选值：`"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`。 | `"INFO"` |
-| `snapshot` | boolean | 是否启用 Git 快照备份机制。设为 `false` 禁用。 | `true` |
+| `logLevel` | enum | 日志级别。可选值：`"DEBUG"`, `"INFO"`, `"WARN"`, `"ERROR"`。 | - |
+| `snapshot` | boolean | 是否启用 Git 快照备份机制。设为 `false` 禁用。 | 未设置时启用 |
 
 ### 模型与 Agent
 
@@ -111,6 +123,17 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 | `setCacheKey` | boolean | 是否启用 Prompt Cache 键（用于 Anthropic/DeepSeek 等）。默认 `false`。 |
 | `enterpriseUrl` | string | GitHub Enterprise URL (仅 Copilot Provider)。 |
 
+### Provider 级字段
+
+Provider 对象本身还支持以下字段：
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `name` | string | Provider 显示名称。 |
+| `env` | string[] | 环境变量名列表（用于自动检测 API Key）。 |
+| `whitelist` | string[] | 仅允许使用的模型列表。 |
+| `blacklist` | string[] | 禁止使用的模型列表。 |
+
 ### 模型特定配置 (models)
 
 针对特定模型进行微调：
@@ -121,22 +144,13 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
     "models": {
       "claude-3-7-sonnet": {
         "variants": {
-          "thinking": { "disabled": true } // 禁用特定变体
+          "thinking": { "disabled": true }
         }
       }
     }
   }
 }
 ```
-
-### 黑白名单
-
-在 Provider 配置对象内也可以控制模型列表：
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `whitelist` | string[] | 仅允许使用的模型列表。 |
-| `blacklist` | string[] | 禁止使用的模型列表。 |
 
 ---
 
@@ -162,11 +176,12 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 | `description` | string | Agent 的简短描述，显示在 `/agent` 列表中。 |
 | `mode` | enum | Agent 类型。`"primary"`(独立模式), `"subagent"`(子代理), `"all"`。 |
 | `model` | string | 该 Agent 专用的模型 ID。 |
+| `variant` | string | 默认模型变体（仅在使用该 Agent 配置的模型时生效）。 |
 | `prompt` | string | System Prompt (人设指令)。 |
 | `temperature` | number | 温度系数 (0.0 - 1.0)。 |
 | `top_p` | number | 核采样参数 (0.0 - 1.0)。 |
 | `steps` | number | 最大自动迭代步数。 |
-| `color` | string | 在界面中显示的颜色 (Hex 格式，如 `#FF0000`)。 |
+| `color` | string | 在界面中显示的颜色 (Hex 格式，如 `#FF0000`)，或主题色名（如 `primary`）。 |
 | `hidden` | boolean | 是否在 `@` 自动补全菜单中隐藏此 Agent。 |
 | `permission` | object | 该 Agent 的专用权限配置 (覆盖全局权限)。 |
 | `disable` | boolean | 是否禁用此 Agent。 |
@@ -202,15 +217,20 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 - `read`: 读取文件
 - `edit`: 编辑/写入文件
 - `bash`: 执行命令
-- `webfetch`: 访问网页
-- `websearch`: 搜索引擎
-- `codesearch`: 代码搜索
 - `glob`: 文件查找
 - `grep`: 内容搜索
 - `list`: 列出目录
-- `external_directory`: 访问外部目录
-- `lsp`: LSP 操作
 - `task`: 调用子 Agent
+- `external_directory`: 访问外部目录
+- `todowrite`: TODO 写入
+- `todoread`: TODO 读取
+- `question`: 提问工具
+- `webfetch`: 访问网页
+- `websearch`: 搜索引擎
+- `codesearch`: 代码搜索
+- `lsp`: LSP 操作
+- `doom_loop`: 死循环检测
+- `skill`: 技能调用
 
 ---
 
@@ -274,7 +294,8 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 "server": {
   "port": 4096,
   "hostname": "0.0.0.0",
-  "mdns": true
+  "mdns": true,
+  "mdnsDomain": "opencode.local"
 }
 ```
 
@@ -283,6 +304,7 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 | `port` | number | 监听端口。 | 4096 |
 | `hostname` | string | 监听地址。启用 mdns 时默认为 `0.0.0.0`。 | 127.0.0.1 |
 | `mdns` | boolean | 是否启用 mDNS 本地网络发现。 | false |
+| `mdnsDomain` | string | mDNS 服务的自定义域名。 | `opencode.local` |
 | `cors` | string[] | 允许跨域请求的来源列表。 | - |
 
 ---
@@ -302,25 +324,12 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 |------|------|------|
 | `batch_tool` | boolean | 启用批量操作工具。 |
 | `openTelemetry` | boolean | 启用 OpenTelemetry 链路追踪。 |
-| `chatMaxRetries` | number | 对话请求失败时的最大重试次数。 |
 | `disable_paste_summary` | boolean | 禁用粘贴大段文本时的自动摘要。 |
 | `continue_loop_on_deny` | boolean | 当工具调用被用户拒绝时，是否让 Agent 继续思考（而不是中断）。 |
 | `primary_tools` | string[] | 指定仅限 Primary Agent 使用的工具列表。 |
 | `mcp_timeout` | number | MCP 请求的全局超时时间（毫秒）。 |
-| `hook` | object | 事件钩子配置。 |
 
-### Hook 配置
-
-```json
-"experimental": {
-  "hook": {
-    "file_edited": {
-      "*.ts": [{ "command": ["prettier", "--write", "$FILE"] }]
-    },
-    "session_completed": [{ "command": ["notify-send", "Done"] }]
-  }
-}
-```
+> Hook（事件钩子）功能通过**插件系统**实现，不是 `experimental` 配置。详见 [Hooks 机制](../5-advanced/12c-hooks)。
 
 ---
 
@@ -332,11 +341,16 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 ```json
 "compaction": {
   "auto": true,
-  "prune": true
+  "prune": true,
+  "reserved": 10000
 }
 ```
-- `auto`: 上下文满时自动触发压缩。
-- `prune`: 压缩时移除旧的工具输出。
+
+| 字段 | 类型 | 说明 | 默认值 |
+|------|------|------|--------|
+| `auto` | boolean | 上下文满时自动触发压缩。 | `true` |
+| `prune` | boolean | 压缩时移除旧的工具输出。 | `true` |
+| `reserved` | number | 压缩时的 Token 缓冲区，预留足够窗口避免溢出。 | - |
 
 ### watcher (监视器)
 控制文件系统监视。
@@ -359,6 +373,19 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 "plugin": ["opencode-helicone-session", "./my-plugin.js"]
 ```
 要加载的插件列表。支持 npm 包名或本地文件路径。
+
+### skills (技能路径)
+```json
+"skills": {
+  "paths": ["./skills", "~/shared-skills"],
+  "urls": ["https://example.com/.well-known/skills/"]
+}
+```
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `paths` | string[] | 额外的 Skill 文件夹路径。 |
+| `urls` | string[] | 远程 Skill 获取地址。 |
 
 ### mcp (扩展协议)
 配置 Model Context Protocol 服务器。详见 [MCP 文档](../5-advanced/07a-mcp-basics)。
@@ -384,21 +411,22 @@ OpenCode 按以下顺序加载配置（优先级从低到高，后者覆盖前�
 <details>
 <summary><strong>点击展开查看源码位置</strong></summary>
 
-> 更新时间：2025-01-20
+> 更新时间：2026-02-14
 
 所有配置 Schema 定义均在 `packages/opencode/src/config/config.ts` 文件中。
 
 | 配置项 | 对应 Schema | 行号范围 |
 |--------|------------|----------|
-| 顶层 Info | `Info` | L867-L1078 |
-| Provider | `Provider` | L814-L865 |
-| Agent | `Agent` | L550-L630 |
-| Permission | `Permission` | L509-L539 |
-| Keybinds | `Keybinds` | L632-L781 |
-| TUI | `TUI` | L783-L795 |
-| Server | `Server` | L797-L807 |
-| Command | `Command` | L541-L548 |
-| MCP | `Mcp` | L407-L472 |
-| Experimental | `experimental` | L1029-L1071 |
+| 顶层 Info | `Info` | L1004-L1197 |
+| Provider | `Provider` | L951-L1001 |
+| Agent | `Agent` | L672-L758 |
+| Permission | `Permission` | L621-L652 |
+| Keybinds | `Keybinds` | L761-L917 |
+| TUI | `TUI` | L919-L931 |
+| Server | `Server` | L933-L944 |
+| Command | `Command` | L654-L661 |
+| Skills | `Skills` | L663-L670 |
+| MCP | `Mcp` | L523-L584 |
+| Experimental | `experimental` | L1172-L1192 |
 
 </details>

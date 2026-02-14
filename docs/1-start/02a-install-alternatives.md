@@ -175,6 +175,15 @@ curl -fsSL https://opencode.ai/install | bash -s -- --no-modify-path
 ./install --binary /path/to/opencode
 ```
 
+### 安装位置
+
+官方脚本默认安装到 `$HOME/.opencode/bin`。如果你想装到其他位置，安装完成后手动移动二进制文件即可：
+
+```bash
+# 安装后移动到 /usr/local/bin
+sudo mv ~/.opencode/bin/opencode /usr/local/bin/opencode
+```
+
 ---
 
 ## 安装位置

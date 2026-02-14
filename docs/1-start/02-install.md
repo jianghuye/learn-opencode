@@ -85,8 +85,7 @@ Windows 推荐用 **Scoop** 安装（不需要管理员权限）。
 **如果你已经有 Scoop：**
 
 ```powershell
-scoop bucket add extras
-scoop install extras/opencode
+scoop install opencode
 ```
 
 ::: details 没装过 Scoop？点这里展开安装步骤
@@ -121,8 +120,7 @@ scoop install git
 **第 4 步：安装 OpenCode**
 
 ```powershell
-scoop bucket add extras
-scoop install extras/opencode
+scoop install opencode
 ```
 :::
 
@@ -210,12 +208,52 @@ opencode
 
 ---
 
+## 🖥️ 桌面版应用（可选）
+
+如果你更喜欢图形界面，OpenCode 也提供桌面版应用。
+
+### 下载安装
+
+| 平台 | 下载方式 |
+|------|---------|
+| **macOS (Apple Silicon)** | [GitHub Releases](https://github.com/anomalyco/opencode/releases) 下载 `opencode-desktop-darwin-aarch64.dmg` |
+| **macOS (Intel)** | 下载 `opencode-desktop-darwin-x64.dmg` |
+| **Windows** | 下载 `opencode-desktop-windows-x64.exe` |
+| **Linux** | `.deb`、`.rpm` 或 AppImage |
+
+**包管理器安装**：
+
+```bash
+# macOS Homebrew
+brew install --cask opencode-desktop
+
+# Windows Scoop
+scoop bucket add extras
+scoop install extras/opencode-desktop
+```
+
+### 桌面版 vs 终端版
+
+| 特性 | 终端版 (TUI) | 桌面版 |
+|------|-------------|--------|
+| 界面 | 终端命令行 | 图形窗口 |
+| 系统通知 | ❌ 无 | ✅ 任务完成时自动通知 |
+| 多窗口 | ❌ 单窗口 | ✅ 支持多标签页 |
+| 安装复杂度 | 简单 | 稍复杂（需下载安装包） |
+
+::: tip 建议
+推荐两个都装。日常用终端版（效率更高），需要长时间任务时用桌面版（可以最小化，完成时会通知你）。
+:::
+
+---
+
 ## 本课小结
 
 你学会了：
 
 1. 用一行命令安装 OpenCode
 2. 验证安装是否成功
+3. 了解桌面版应用（可选）
 
 ---
 

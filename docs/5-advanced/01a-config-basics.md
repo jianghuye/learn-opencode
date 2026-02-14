@@ -53,14 +53,31 @@ prerequisite:
 
 ## 配置文件位置
 
-| 位置 | 优先级 | 说明 |
-|-----|-------|------|
-| `./opencode.json` | 高 | 项目级配置 |
-| `~/.config/opencode/opencode.json` | 低 | 全局配置 |
-| `OPENCODE_CONFIG` 环境变量 | 最高 | 自定义配置文件路径 |
-| `OPENCODE_CONFIG_DIR` 环境变量 | - | 自定义配置目录 |
+OpenCode 按以下顺序加载配置，优先级从低到高（后加载的覆盖先加载的）：
+
+| 优先级 | 位置 | 说明 |
+|-------|-----|------|
+| 1（最低） | 远程 `.well-known/opencode` | 远程组织默认配置（通过 Auth 机制获取） |
+| 2 | `~/.config/opencode/opencode.json` | 全局用户配置 |
+| 3 | `OPENCODE_CONFIG` 环境变量 | 自定义配置文件路径 |
+| 4 | `./opencode.json` | 项目根目录配置 |
+| 5 | `./.opencode/opencode.json` | 项目 .opencode 目录配置 |
+| 6 | `OPENCODE_CONFIG_CONTENT` 环境变量 | 内联配置内容（JSON 字符串） |
+| 7（最高） | 受管配置目录 | 企业部署，管理员控制 |
 
 > 配置文件是**合并**的，不是覆盖。后面的配置会覆盖前面冲突的键，但非冲突的设置都会保留。
+
+::: details 受管配置目录（企业部署）
+企业环境下，管理员可以在系统级目录放置配置，优先级最高，会覆盖所有用户和项目配置：
+
+| 平台 | 路径 |
+|------|------|
+| macOS | `/Library/Application Support/opencode` |
+| Windows | `%ProgramData%\opencode` |
+| Linux | `/etc/opencode` |
+
+普通用户一般用不到这个，了解即可。
+:::
 
 ### 配置目录结构
 
@@ -73,9 +90,10 @@ prerequisite:
 └── plugin/             # 全局插件
 
 项目目录/
-├── opencode.json       # 项目配置
+├── opencode.json       # 项目配置（优先级 4）
 ├── AGENTS.md           # 项目规则
 └── .opencode/
+    ├── opencode.json   # 项目配置（优先级 5，推荐）
     ├── agent/          # 项目 Agent
     ├── command/        # 项目命令
     └── plugin/         # 项目插件

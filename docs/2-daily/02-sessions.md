@@ -4,21 +4,23 @@ subtitle: 高效管理你的会话
 course: OpenCode 中文实战课
 stage: 第二阶段
 lesson: "2.2"
-duration: 10 分钟
-practice: 15 分钟
+duration: 15 分钟
+practice: 20 分钟
 level: 新手
-description: 用 /new 新建会话、/sessions 切换、/undo 撤销、/export 导出，高效管理 OpenCode 对话记录。
+description: 用 /new 新建会话、/sessions 切换、/undo 撤销、/export 导出，还能用 CLI 备份恢复和 Fork 分叉会话。
 tags:
   - 会话
   - 撤销
   - 导出
+  - 导入
+  - Fork
 prerequisite:
   - 2.1 界面与基础操作
 ---
 
 # 管理对话
 
-> 💡 **一句话总结**：用 `/new` 新建会话，用 `/sessions` 切换，用 `/undo` 撤销，用 `/export` 导出。
+> 💡 **一句话总结**：用 `/new` 新建会话，用 `/sessions` 切换，用 `/undo` 撤销，用 `/export` 导出，用 `opencode import` 导入。
 
 ## 📝 课程笔记
 
@@ -34,7 +36,9 @@ prerequisite:
 
 - 创建和切换多个会话
 - 撤销 AI 的错误操作
-- 导出对话记录
+- 导出对话记录（Markdown 和 JSON 两种格式）
+- 从文件或分享链接导入会话
+- Fork 会话，从某个节点分叉出新对话
 - 压缩过长的上下文
 
 ---
@@ -44,6 +48,8 @@ prerequisite:
 - 对话越来越长，AI 开始混淆上下文
 - AI 改错了代码，不知道怎么撤销
 - 重要的对话想保存下来，不知道怎么导出
+- 同事分享了一个会话链接，不知道怎么导入到本地继续
+- 想从对话的某个节点尝试不同方向，但不想丢掉原来的进度
 
 ---
 
@@ -72,6 +78,37 @@ prerequisite:
 - **并行工作**：一边让 AI 写代码，一边让 AI 分析文档
 - **保留历史**：重要对话可以保留，随时回看
 
+### 会话存在哪里？
+
+OpenCode 把会话数据存储在本地文件系统中，按 JSON 文件组织：
+
+```
+~/.local/share/opencode/storage/
+├── session/           # 会话信息
+│   └── <project-id>/
+│       └── <session-id>.json
+├── message/           # 消息记录
+│   └── <session-id>/
+│       └── <message-id>.json
+└── part/              # 消息片段（文本、工具调用等）
+    └── <message-id>/
+        └── <part-id>.json
+```
+
+::: details 路径说明
+`~/.local/share/opencode/` 是 XDG 标准的数据目录。macOS 和 Linux 都遵循这个规范。会话按项目隔离，不同项目的会话互不干扰。
+:::
+
+### 会话的一生
+
+一个会话从创建到结束，经历这几个阶段：
+
+```
+创建 → 活跃对话 → 压缩（上下文太长时自动触发）→ 归档/删除
+```
+
+大多数时候你不需要关心这些，OpenCode 会自动处理。你只需要知道：对话太长时会自动压缩（详见 [5.20 上下文压缩](/5-advanced/20-compaction)），不用的会话可以删除。
+
 ### 会话管理命令速览
 
 | 命令 | 作用 |
@@ -83,6 +120,8 @@ prerequisite:
 | `/compact` | 压缩上下文 |
 | `/export` | 导出对话记录 |
 | `/share` | 分享会话（生成链接） |
+| `opencode import` | 从文件或 URL 导入会话（CLI 命令） |
+| `opencode export` | 导出会话为 JSON（CLI 命令） |
 
 ---
 
@@ -178,6 +217,78 @@ AI 可能会做错事，撤销能帮你恢复。
 
 **你应该看到**：对话被导出为 Markdown 文件
 
+### 第 7 步：用 CLI 导出和导入会话
+
+**为什么**  
+TUI 里的 `/export` 导出的是 Markdown 格式，适合阅读。但如果你想备份完整数据、或者在另一台机器上恢复会话，需要用 CLI 命令导出 JSON 格式。
+
+**导出**：
+
+```bash
+# 交互式选择会话导出
+opencode export
+
+# 指定会话 ID 导出，重定向到文件
+opencode export session_abc123 > backup.json
+```
+
+不指定会话 ID 时，会弹出列表让你选：
+
+```
+Export session
+◇ Select session to export
+│   Fix authentication bug • 2026-02-14 10:30 • a1b2c3d4
+│   Add new API endpoint • 2026-02-13 15:20 • e5f6g7h8
+└   Update documentation • 2026-02-12 09:00 • i9j0k1l2
+```
+
+**导入**：
+
+```bash
+# 从本地文件导入
+opencode import backup.json
+```
+
+**你应该看到**：`Imported session: session_abc123`
+
+导入后，用 `/sessions` 就能看到恢复的会话。
+
+### 第 8 步：从分享链接导入会话
+
+**为什么**  
+同事分享了一个 OpenCode 会话链接，你想在本地继续那个对话。
+
+```bash
+opencode import https://opncd.ai/share/abc123
+```
+
+::: tip 💡 URL 格式
+分享链接的默认格式是 `https://opncd.ai/share/<slug>`。企业版用户的域名可能不同，取决于 `enterprise.url` 配置。如果 URL 格式不对，会提示错误。
+:::
+
+### 第 9 步：Fork 会话
+
+**为什么**  
+有时候你想从对话的某个节点"分叉"出去，尝试不同的方向，但又不想丢掉原来的对话。Fork 就是干这个的。
+
+Fork 会复制当前会话的所有历史消息，创建一个新会话。新会话的标题会加上 `(fork #1)` 后缀，再次 Fork 则递增为 `(fork #2)`、`(fork #3)`……
+
+**操作方式**：
+
+Fork 没有默认快捷键，你可以在 `opencode.json` 中给它绑一个：
+
+```json
+{
+  "keybinds": {
+    "session_fork": "<leader>f"
+  }
+}
+```
+
+配置后，按 <kbd>Ctrl</kbd>+<kbd>X</kbd> <kbd>f</kbd> 就能 Fork 当前会话。
+
+**你应该看到**：新会话出现，标题类似 `原标题 (fork #1)`
+
 ---
 
 ## 检查点 ✅
@@ -188,6 +299,8 @@ AI 可能会做错事，撤销能帮你恢复。
 - [ ] `/sessions` 能看到会话列表并切换
 - [ ] `/undo` 能撤销 AI 的操作
 - [ ] `/export` 能导出对话
+- [ ] `opencode export` 能导出 JSON 格式的完整会话数据
+- [ ] `opencode import` 能从文件导入会话
 
 ---
 
@@ -198,6 +311,8 @@ AI 可能会做错事，撤销能帮你恢复。
 | `/undo` 没效果 | AI 没有修改任何文件 | 只有文件操作才能撤销 |
 | 会话太多找不到 | 会话名都是默认的 | 养成用 `/new 任务名` 命名的习惯 |
 | `/compact` 后丢了重要信息 | 压缩会删除详细对话 | 重要信息先 `/export` 备份 |
+| `opencode import` 失败 | JSON 格式不对 | 只能导入 `opencode export` 导出的文件 |
+| 分享 URL 导入失败 | URL 格式不对 | 格式必须是 `https://opncd.ai/share/<slug>` |
 
 ---
 
@@ -209,7 +324,10 @@ AI 可能会做错事，撤销能帮你恢复。
 2. 用 `/sessions` 切换会话
 3. 用 `/undo` `/redo` 撤销和重做
 4. 用 `/compact` 压缩上下文
-5. 用 `/export` 导出对话
+5. 用 `/export` 导出对话（Markdown 格式）
+6. 用 `opencode export` / `opencode import` 备份和恢复完整会话（JSON 格式）
+7. 从分享链接导入会话：`opencode import https://opncd.ai/share/xxx`
+8. 用 Fork 从当前对话分叉出新会话
 
 ---
 
