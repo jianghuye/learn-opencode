@@ -652,7 +652,6 @@ opencode serve --hostname 0.0.0.0
 | `OPENCODE_EXPERIMENTAL` | boolean | 启用所有实验性功能 |
 | `OPENCODE_EXPERIMENTAL_ICON_DISCOVERY` | boolean | 启用图标发现 |
 | `OPENCODE_EXPERIMENTAL_DISABLE_COPY_ON_SELECT` | boolean | 禁用 TUI 中选中即复制 |
-| `OPENCODE_EXPERIMENTAL_BASH_MAX_OUTPUT_LENGTH` | number | Bash 最大输出长度 |
 | `OPENCODE_EXPERIMENTAL_BASH_DEFAULT_TIMEOUT_MS` | number | Bash 默认超时（毫秒） |
 | `OPENCODE_EXPERIMENTAL_OUTPUT_TOKEN_MAX` | number | LLM 最大输出 token |
 | `OPENCODE_EXPERIMENTAL_FILEWATCHER` | boolean | 启用目录文件监听 |
