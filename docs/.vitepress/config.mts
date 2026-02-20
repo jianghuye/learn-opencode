@@ -424,6 +424,8 @@ export default defineConfig({
           { text: 'v1.1.6', link: '/changelog/v1.1.6' },
           { text: 'v1.1.4', link: '/changelog/v1.1.4' },
           { text: 'v1.1.3', link: '/changelog/v1.1.3' },
+          { text: 'v1.1.2', link: '/changelog/v1.1.2' },
+          { text: 'v1.1.1', link: '/changelog/v1.1.1' },
         ]
       },
     ],
